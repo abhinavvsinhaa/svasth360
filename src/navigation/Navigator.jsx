@@ -3,6 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {enableScreens} from 'react-native-screens';
 import { View, Text } from 'react-native';
 import { SignUp } from '../screens/SignUp';
+import { EnterOTP } from '../screens/EnterOTP';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,11 +27,9 @@ enableScreens();
 
 export const Navigator = () => {
     return (
-        <Stack.Navigator initialRouteName='Home' screenOptions={{
-          headerShown: false
-        }}>
+        <Stack.Navigator initialRouteName='Home'>
             <Stack.Screen name='Home' component={SignUp}/>
-            <Stack.Screen name='Details' component={DetailsScreen}/>
+            <Stack.Screen name='Details' component={EnterOTP}/>
         </Stack.Navigator>
     );
 }
