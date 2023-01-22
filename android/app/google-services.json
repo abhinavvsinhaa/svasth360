@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "119073131266",
+    "project_id": "svasth360-de739",
+    "storage_bucket": "svasth360-de739.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:119073131266:android:01442ec637aab22134101b",
+        "android_client_info": {
+          "package_name": "com.svasth360"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "119073131266-9uqhil56rdm8kpds807sub39b1tjmmgc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.svasth360",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "119073131266-9a11ue4fon8atp34aufjs7q2gtnf5nre.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCP_XHN0Eq7PvbKeZ9oECUW4ETOSSkXphg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "119073131266-9a11ue4fon8atp34aufjs7q2gtnf5nre.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "119073131266-c0g19hsa3foss42megtb5964njr2q9ts.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.svasth360"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,11 +1,13 @@
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
+#import <Firebase.h>
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [FIRApp configure];
   self.moduleName = @"svasth360";
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }

@@ -4,6 +4,7 @@ import {enableScreens} from 'react-native-screens';
 import { View, Text } from 'react-native';
 import { SignUp } from '../screens/SignUp';
 import { EnterOTP } from '../screens/EnterOTP';
+import { FillSignUpDetails } from '../screens/FillSignUpDetails';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +31,7 @@ export const Navigator = () => {
         <Stack.Navigator initialRouteName='Home'>
             <Stack.Screen name='Home' component={SignUp}/>
             <Stack.Screen name='Details' component={EnterOTP}/>
+            <Stack.Screen name='Sign Up' component={FillSignUpDetails}/>
         </Stack.Navigator>
     );
 }

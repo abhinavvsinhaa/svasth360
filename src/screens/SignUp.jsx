@@ -1,11 +1,20 @@
 import React from 'react';
-import {StyleSheet, View, Image, ImageBackground, Text, TextInput, Pressable} from 'react-native';
-import { styleConstants } from '../constants/constant';
+import {
+  StyleSheet,
+  View,
+  Image,
+  ImageBackground,
+  Text,
+  TextInput,
+  Pressable,
+} from 'react-native';
+import {styleConstants} from '../constants/constant';
 
-export const SignUp = ({ navigation }) => {
-
-  function handleGetOTP() {
-    navigation.navigate('Details')
+export const SignUp = ({navigation}) => {
+  function handleGetOTP(event) {
+    event.preventDefault();
+    // onSignInSubmit();
+    // navigation.navigate('Details');
   }
 
   return (
@@ -20,14 +29,17 @@ export const SignUp = ({ navigation }) => {
         <Text style={styles.otpVerificationDescription}>
           We will send you a One Time Password on this mobile number
         </Text>
-        <TextInput placeholder='Enter your mobile number' style={styles.mobileNumberInput}/>
+        <TextInput
+          placeholder="Enter your mobile number"
+          style={styles.mobileNumberInput}
+        />
         <Pressable style={styles.getOTPButton} onPress={handleGetOTP}>
-            <Text style={styles.OTPButtonText}>Get OTP</Text>
+          <Text style={styles.OTPButtonText}>Get OTP</Text>
         </Pressable>
       </ImageBackground>
     </View>
   );
-}; 
+};
 
 const styles = StyleSheet.create({
   container: {
