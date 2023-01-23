@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -7,14 +7,29 @@ import {
   Text,
   TextInput,
   Pressable,
+  Alert,
 } from 'react-native';
 import {styleConstants} from '../constants/constant';
 
+
 export const SignUp = ({navigation}) => {
+  const [phoneNumber, setPhoneNumber] = useState('');
+
   function handleGetOTP(event) {
     event.preventDefault();
-    // onSignInSubmit();
-    // navigation.navigate('Details');
+    if (
+      phoneNumber == '' ||
+      phoneNumber.length != 10 ||
+      !String(phoneNumber).match(/^\d{10}$/)
+    ) {
+      Alert.alert(
+        'Invalid Phone Number',
+        'Please fill a valid phone number upto 10 digits.',
+      );
+      return;
+    }
+    // signInWithPhoneNumber();
+    navigation.navigate('Details', { phoneNumber: `+91${phoneNumber}` })
   }
 
   return (
@@ -32,6 +47,8 @@ export const SignUp = ({navigation}) => {
         <TextInput
           placeholder="Enter your mobile number"
           style={styles.mobileNumberInput}
+          value={phoneNumber}
+          onChangeText={text => setPhoneNumber(text)}
         />
         <Pressable style={styles.getOTPButton} onPress={handleGetOTP}>
           <Text style={styles.OTPButtonText}>Get OTP</Text>

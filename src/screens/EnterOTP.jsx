@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -7,12 +7,50 @@ import {
   Text,
   TextInput,
   Pressable,
+  Alert,
 } from 'react-native';
 import {styleConstants} from '../constants/constant';
+import auth from '@react-native-firebase/auth';
+import OTPInputView from '@twotalltotems/react-native-otp-input';
 
-export const EnterOTP = ({navigation, mobileNumber}) => {
-  function submitOTP() {
-    navigation.navigate('Sign Up');
+export const EnterOTP = ({navigation, route}) => {
+  const {phoneNumber} = route.params;
+  const [confirmation, setConfirmation] = useState(null);
+  const [otp, setOTP] = useState('');
+
+  async function generateOTP() {
+    const generatedOTP = await auth().signInWithPhoneNumber(
+      JSON.stringify(phoneNumber),
+    );
+    setConfirmation(generatedOTP);
+  }
+
+  useEffect(() => {
+    generateOTP();
+  }, []);
+
+  async function validateOTP() {
+    try {
+      if (confirmation != null) {
+        const res = await confirmation.confirm(String(otp));
+        // if res 
+        console.log(res);
+      }
+    } catch (error) {
+      Alert.alert("Incorrect OTP", "Please check again and fill the correct OTP")
+      console.log('error validating OTP', error);
+    }
+  }
+
+  function submitOTP(event) {
+    event.preventDefault();
+    if ((otp == '')) {
+      Alert.alert('Invalid OTP', 'Please fill OTP again.');
+      return;
+    }
+
+    validateOTP();
+    // navigation.navigate('Sign Up');
   }
 
   return (
@@ -25,13 +63,15 @@ export const EnterOTP = ({navigation, mobileNumber}) => {
         <Image source={require('../assets/images/Lock.png')} />
         <Text style={styles.otpVerificationHeader}>OTP Verification</Text>
         <Text style={styles.otpVerificationDescription}>
-          Enter the OTP sent to +91 {mobileNumber}
+          Enter the OTP sent to {phoneNumber}
         </Text>
         <View style={styles.enterOTPInputView}>
-          <TextInput style={styles.otpInput} />
-          <TextInput style={styles.otpInput} />
-          <TextInput style={styles.otpInput} />
-          <TextInput style={styles.otpInput} />
+          <OTPInputView
+            pinCount={6}
+            autoFocusOnLoad
+            codeInputFieldStyle={styles.otpInput}
+            onCodeFilled={code => setOTP(code)}
+          />
         </View>
         <Pressable style={styles.getOTPButton} onPress={submitOTP}>
           <Text style={styles.OTPButtonText}>Submit</Text>
@@ -68,12 +108,15 @@ const styles = StyleSheet.create({
   },
   otpInput: {
     borderRadius: 10,
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-    backgroundColor: '#fff',
+    // paddingVertical: 15,
+    // paddingHorizontal: 20,
+    // backgroundColor: '#fff',
     marginTop: 20,
-    width: '15%',
     marginHorizontal: 10,
+    textAlign: 'center',
+    color: "#000"
+    // paddingHorizontal: 10,
+    // paddingVertical: 10,
   },
   getOTPButton: {
     backgroundColor: styleConstants.BLUE,
@@ -92,6 +135,7 @@ const styles = StyleSheet.create({
   enterOTPInputView: {
     display: 'flex',
     flexDirection: 'row',
+    height: 75,
   },
   resendText: {
     fontFamily: 'Poppins-Medium',
