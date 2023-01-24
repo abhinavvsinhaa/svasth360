@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -12,11 +12,13 @@ import {
 import {styleConstants} from '../constants/constant';
 import auth from '@react-native-firebase/auth';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
+import { useAuth } from '../context/Auth';
 
 export const EnterOTP = ({navigation, route}) => {
   const {phoneNumber} = route.params;
   const [confirmation, setConfirmation] = useState(null);
   const [otp, setOTP] = useState('');
+  const { signIn, loading } = useAuth() 
 
   async function generateOTP() {
     const generatedOTP = await auth().signInWithPhoneNumber(
@@ -33,8 +35,14 @@ export const EnterOTP = ({navigation, route}) => {
     try {
       if (confirmation != null) {
         const res = await confirmation.confirm(String(otp));
-        // if res says new user then navigate to Fill Details else Dashboard
-        console.log(res);
+
+        // if new user navigate to sign up page, else sign in user
+        if (res.additionalUserInfo.isNewUser) {
+          navigation.navigate('Sign Up')
+        } 
+        else {
+          signIn(res.user)
+        }
       }
     } catch (error) {
       Alert.alert("Incorrect OTP", "Please check again and fill the correct OTP")

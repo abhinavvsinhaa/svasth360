@@ -29,7 +29,7 @@ export const SignUp = ({navigation}) => {
       return;
     }
     // signInWithPhoneNumber();
-    navigation.navigate('Details', { phoneNumber: `+91${phoneNumber}` })
+    navigation.navigate('Enter OTP', { phoneNumber: `+91${phoneNumber}` })
   }
 
   return (

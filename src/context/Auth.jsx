@@ -27,7 +27,7 @@ const AuthProvider = ({ children }) => {
 
     async function signIn(userInfo) {
         setAuthData(userInfo)
-        await AsyncStorage.setItem('@AuthData', JSON.stringify(authData));
+        await AsyncStorage.setItem('@AuthData', JSON.stringify(userInfo));
     }
 
     async function signOut() {
