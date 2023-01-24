@@ -1,37 +1,17 @@
 import * as React from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {enableScreens} from 'react-native-screens';
-import { View, Text } from 'react-native';
-import { SignUp } from '../screens/SignUp';
-import { EnterOTP } from '../screens/EnterOTP';
-import { FillSignUpDetails } from '../screens/FillSignUpDetails';
-
-const Stack = createNativeStackNavigator();
-
-function HomeScreen() {
-  return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text>Home Screen</Text>
-    </View>
-  );
-}
-
-function DetailsScreen() {
-  return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text>Details Screen</Text>
-    </View>
-  );
-}
-
-enableScreens();
+import {NavigationContainer} from '@react-navigation/native';
+import {useAuth} from '../context/Auth';
+import {AppStack} from './AppStack';
+import {AuthStack} from './AuthStack';
 
 export const Navigator = () => {
-    return (
-        <Stack.Navigator initialRouteName='Home'>
-            <Stack.Screen name='Home' component={SignUp}/>
-            <Stack.Screen name='Details' component={EnterOTP}/>
-            <Stack.Screen name='Sign Up' component={FillSignUpDetails}/>
-        </Stack.Navigator>
-    );
-}
+  const {authData, loading} = useAuth(); // return context value
+
+  // TODO: if loading true, return some loading component
+
+  return (
+    <NavigationContainer>
+      {authData ? <AppStack /> : <AuthStack />}
+    </NavigationContainer>
+  );
+};

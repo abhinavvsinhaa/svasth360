@@ -33,7 +33,7 @@ export const EnterOTP = ({navigation, route}) => {
     try {
       if (confirmation != null) {
         const res = await confirmation.confirm(String(otp));
-        // if res 
+        // if res says new user then navigate to Fill Details else Dashboard
         console.log(res);
       }
     } catch (error) {

@@ -1,0 +1,16 @@
+import React from "react";
+import { View, Text, StyleSheet, ImageBackground, Image } from "react-native";
+
+export const Dashboard = () => {
+    return(
+        <View style={styles.container}>
+            <Text>Dashboard</Text>
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    }
+})
