@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
   searchView: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
+    marginTop: 10
   }
 });
