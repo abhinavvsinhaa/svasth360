@@ -11,7 +11,9 @@ enableScreens();
 
 export const AuthStack = () => {
   return (
-    <Stack.Navigator initialRouteName="Enter Mobile Number">
+    <Stack.Navigator initialRouteName="Enter Mobile Number" screenOptions={{
+      headerShown: false
+    }}>
       <Stack.Screen name="Enter Mobile Number" component={SignUp} />
       <Stack.Screen name="Enter OTP" component={EnterOTP} />
       <Stack.Screen name="Sign Up" component={FillSignUpDetails} />

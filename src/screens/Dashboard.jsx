@@ -1,22 +1,23 @@
 import React from 'react';
-import {StyleSheet, SafeAreaView, View, ScrollView} from 'react-native';
-import { CHSearchDashboard } from '../components/CHSearchDashboard/CHSearchDashboard';
+import {StyleSheet, SafeAreaView, View, ScrollView, StatusBar} from 'react-native';
+import {CHSearchDashboard} from '../components/CHSearchDashboard/CHSearchDashboard';
 import {DashboardHeaderBar} from '../components/DashboardHeaderBar/DashboardHeaderBar';
-import { DoctorCard } from '../components/DoctorCard/DoctorCard';
-import { MedColSearchDashboard } from '../components/MedColSearchDashboard/MedColSearchDashboard';
-import { PHCSearchDashboard } from '../components/PHCSearchDashboard/PHCSearchDashboard';
-import { ZHSearchDashboard } from '../components/ZHSearchDashboard/ZHSearchDashboard';
+import {DoctorCard} from '../components/DoctorCard/DoctorCard';
+import {MedColSearchDashboard} from '../components/MedColSearchDashboard/MedColSearchDashboard';
+import {PHCSearchDashboard} from '../components/PHCSearchDashboard/PHCSearchDashboard';
+import {ZHSearchDashboard} from '../components/ZHSearchDashboard/ZHSearchDashboard';
 import {styleConstants} from '../constants/constant';
 
 export const Dashboard = () => {
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor={styleConstants.SAND}/>
       <DashboardHeaderBar />
       <View style={styles.searchView}>
-        <PHCSearchDashboard/>
-        <CHSearchDashboard/>
-        <ZHSearchDashboard/>
-        <MedColSearchDashboard/>
+        <PHCSearchDashboard />
+        <CHSearchDashboard />
+        <ZHSearchDashboard />
+        <MedColSearchDashboard />
       </View>
       <ScrollView>
         <DoctorCard />
@@ -34,9 +35,9 @@ const styles = StyleSheet.create({
     backgroundColor: styleConstants.SAND,
   },
   searchView: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 10
-  }
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
 });

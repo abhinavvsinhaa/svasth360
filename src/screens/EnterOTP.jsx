@@ -5,9 +5,9 @@ import {
   Image,
   ImageBackground,
   Text,
-  TextInput,
   Pressable,
   Alert,
+  SafeAreaView
 } from 'react-native';
 import {styleConstants} from '../constants/constant';
 import auth from '@react-native-firebase/auth';
@@ -38,7 +38,7 @@ export const EnterOTP = ({navigation, route}) => {
 
         // if new user navigate to sign up page, else sign in user
         if (res.additionalUserInfo.isNewUser) {
-          navigation.navigate('Sign Up')
+          navigation.navigate('Sign Up', { mobileNumber: phoneNumber, user: JSON.stringify(res.user) })
         } 
         else {
           signIn(res.user)
@@ -62,7 +62,7 @@ export const EnterOTP = ({navigation, route}) => {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ImageBackground
         source={require('../assets/images/Background.png')}
         resizeMode="cover"
@@ -89,7 +89,7 @@ export const EnterOTP = ({navigation, route}) => {
           <Text style={styles.resendText}>Resend</Text>
         </Pressable>
       </ImageBackground>
-    </View>
+    </SafeAreaView>
   );
 };
 

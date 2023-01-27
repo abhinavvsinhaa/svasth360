@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {
   StyleSheet,
-  View,
+  SafeAreaView,
   Image,
   ImageBackground,
   Text,
@@ -33,7 +33,7 @@ export const SignUp = ({navigation}) => {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ImageBackground
         source={require('../assets/images/Background.png')}
         resizeMode="cover"
@@ -54,7 +54,7 @@ export const SignUp = ({navigation}) => {
           <Text style={styles.OTPButtonText}>Get OTP</Text>
         </Pressable>
       </ImageBackground>
-    </View>
+    </SafeAreaView>
   );
 };
 

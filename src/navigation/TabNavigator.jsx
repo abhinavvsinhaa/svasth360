@@ -2,7 +2,7 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Image} from 'react-native';
 import {styleConstants} from '../constants/constant';
-import { Profile, Chat, Appointment, Notifications, Dashboard } from "../screens"
+import { Profile, Chat, Appointment, Notifications, Dashboard, FillSignUpDetails } from "../screens"
 
 const Tab = createBottomTabNavigator();
 
