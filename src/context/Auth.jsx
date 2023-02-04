@@ -15,7 +15,7 @@ const AuthProvider = ({ children }) => {
         try {
             const AuthDataSerialized = await AsyncStorage.getItem("@AuthData")
             if (AuthDataSerialized) {
-                const _authData = JSON.parse(AuthDataSerialized)
+                const _authData = JSON.parse(String(AuthDataSerialized))
                 setAuthData(_authData)
             }
         } catch (error) {

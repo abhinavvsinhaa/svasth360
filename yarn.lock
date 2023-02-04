@@ -7623,3 +7623,8 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+
+zego-zim-react-native@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/zego-zim-react-native/-/zego-zim-react-native-2.6.0.tgz#140316fbce1b45be98583b6903122912bc0daf23"
+  integrity sha512-oBRTvDcN5ce8bKS7lkt0E2QT5ZUx2ANUCxtH3+0V7N1elCsyBdvPJX6uYLOY5CNCR35yzT1Mhsn+g3WhHydQGQ==
