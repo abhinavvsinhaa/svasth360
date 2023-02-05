@@ -1,9 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-    baseURL: "http://localhost:3005/v1/",
-    timeout: 1000,
-    timeoutErrorMessage: "Timeout while trying to reach server!!"
+    baseURL: "http://3.80.197.55:3005/v1/",
 })
 
 export default axiosInstance;

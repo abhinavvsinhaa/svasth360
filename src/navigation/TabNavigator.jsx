@@ -29,7 +29,7 @@ export const TabNavigator = () => {
           },
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Notifications"
         component={Notifications}
         options={{
@@ -41,7 +41,7 @@ export const TabNavigator = () => {
             );
           },
         }}
-      />
+      /> */}
       <Tab.Screen
         name="Dashboard"
         component={Dashboard}
@@ -53,7 +53,7 @@ export const TabNavigator = () => {
           },
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Appointment"
         component={Appointment}
         options={{
@@ -63,7 +63,7 @@ export const TabNavigator = () => {
             );
           },
         }}
-      />
+      /> */}
       <Tab.Screen
         name="Chat"
         component={Chat}

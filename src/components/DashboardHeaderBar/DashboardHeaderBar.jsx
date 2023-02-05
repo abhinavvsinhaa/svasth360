@@ -2,7 +2,7 @@ import React,  { useState } from 'react';
 import {View, Text, StyleSheet, Image, Switch} from 'react-native';
 import {styleConstants} from '../../constants/constant';
 
-export const DashboardHeaderBar = () => {
+export const DashboardHeaderBar = ({ name, designation, specialization }) => {
   const [isEnabled, setIsEnabled] = useState(false);
 
   function handleToggle() {
@@ -11,15 +11,15 @@ export const DashboardHeaderBar = () => {
 
   return (
     <View style={styles.topBar}>
-      <Text style={styles.headerLine}>SEC.HEALTH</Text>
+      <Text style={styles.headerLine}>{designation}</Text>
       <View style={styles.outsideDiv}>
         <View style={styles.insideDiv}>
           <Image
             source={require('../../assets/images/DoctorSamplePhoto.png')}
           />
           <View>
-            <Text style={styles.detailsInHeader}>NAME</Text>
-            <Text style={styles.detailsInHeader}>DESIGNATION</Text>
+            <Text style={styles.detailsInHeader}>{name}</Text>
+            <Text style={styles.detailsInHeader}>{specialization}</Text>
           </View>
         </View>
         <Switch value={isEnabled} onChange={handleToggle} />
@@ -56,7 +56,8 @@ const styles = StyleSheet.create({
   },
   detailsInHeader: {
     color: '#fff',
-    fontFamily: 'Poppins-Medium',
+    fontFamily: 'Poppins-SemiBold',
     marginLeft: 10,
+    fontSize: 16
   },
 });

@@ -1,21 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Pressable, Text } from "react-native";
-import ZIM from "zego-zim-react-native";
+import { useAuth } from "../../context/Auth";
 
-ZIM.create({
-  appID: 1189528528,
-  appSign: "f92ae0afb43b8dbaa49356a9491d1212555895cf630d197599c190581acc7ba3",
-});
-var zim = ZIM.getInstance();
-
-export const Chat = () => {
+export const Chat = ({ userId }) => {
+  const { zim, userInfo } = useAuth();
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   
-  
-  const userInfo = {
-    userID: 'usernew',
-    userName: "usernew",
-  };
   const token =
     "04AAAAAGPfJBIAEGo5b2F2cW4xMXhoMWJkcDYAsD98kO+fHVCTtN24HBH06cERhrBKieOin11MIEu0oH+MdyvkM1n9k9+iD9PBTREzRrPsnWzITz8g074wR7BVXuIzCS1ewkvcEWYoB1q634nGriOUNqcA+B3B83w4XfVutQKQ+DlVTw4jtr332fumW+LnLXpRC3/ojUU7dPRovIW2NVW9OJKzIrSqbxarqR5leUVq1+MUTtATE4pVAM6E8YsygjN3jah1UdhJ2oQJgCwT";
 
@@ -30,7 +20,8 @@ export const Chat = () => {
   };
 
   const sendMessage = () => {
-    var toUserID = "usernewnew";
+    console.log(userId)
+    var toUserID = userId;
     var config = {
       priority: 1, // Set priority for the message. 1: Low (by default). 2: Medium. 3: High.
     };
@@ -57,8 +48,6 @@ export const Chat = () => {
   };
 
   useEffect(() => {
-    // Login the user
-    login();
     // Set up and listen for the callback for receiving error codes.
     zim.on("error", function (zim, errorInfo) {
       console.log("error", errorInfo.code, errorInfo.message);

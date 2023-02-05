@@ -1,29 +1,44 @@
 import React from "react";
-import {View, StyleSheet, Text, Image, Pressable} from "react-native"
+import {View, StyleSheet, Text, Image, Pressable, Platform, Linking} from "react-native"
 import { styleConstants } from "../../constants/constant";
 
-export const DoctorCard = () => {
+export const DoctorCard = ({ name, designation, HF, userId, navigation, key, mobileNumber }) => {
+
+    const openDialScreen = () => {
+        if (Platform.OS == 'android') {
+            const phone = `tel:${mobileNumber}`
+            Linking.openURL(phone)
+        } 
+
+        else if (Platform.OS == 'ios') {
+            const phone = `telprompt:${mobileNumber}`
+            Linking.openURL(phone)
+        }
+    }
+
     return (
-        <View style={styles.cardContainer}>
+        <View style={styles.cardContainer} key={key}>
             <View style={styles.doctorDetailsOuterContainer}>
                 <View style={styles.doctorDetailContainer}>
                     <Image source={require("../../assets/images/DoctorSamplePhoto.png")}/>
                     <View style={{marginLeft: 5}}>
-                        <Text style={{color: styleConstants.BLUE}}>NAME</Text>
-                        <Text style={{color: styleConstants.BLUE}}>DESIGNATION</Text>
-                        <Text style={{color: styleConstants.BLUE}}>HEALTHCARE FACILITY</Text>
+                        <Text style={{color: styleConstants.BLUE}}>{name}</Text>
+                        <Text style={{color: styleConstants.BLUE}}>{designation}</Text>
+                        <Text style={{color: styleConstants.BLUE}}>{HF}</Text>
                     </View>
                 </View>
-                <Text>RED</Text>
+                <Text>Offline</Text>
             </View>
             <View style={styles.actionButtonsContainer}>
-                <Pressable>
+                <Pressable onPress={openDialScreen}>
                     <Image source={require("../../assets/images/VoiceCallCardIconDash.png")}/>
                 </Pressable>
                 <Pressable>
                     <Image source={require("../../assets/images/ChatCardIconDash.png")}/>
                 </Pressable>
-                <Pressable>
+                <Pressable onPress={() => navigation.navigate('Chat', {
+                    userId
+                })}>
                     <Image source={require("../../assets/images/ChatCardIconDash.png")}/>
                 </Pressable>
                 <Pressable>
@@ -50,7 +65,7 @@ const styles = StyleSheet.create({
     doctorDetailContainer: {
         display: "flex",
         flexDirection: "row",
-        alignItems: "center"
+        alignItems: "center",
     },
     actionButtonsContainer: {
         display: "flex",

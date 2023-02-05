@@ -16,17 +16,18 @@ import {styleConstants} from '../constants/constant';
 import {useAuth} from '../context/Auth';
 
 export const FillSignUpDetails = ({navigation, route}) => {
+  // personal details
   const [fullName, setFullName] = useState('');
   const [designation, setDesignation] = useState('');
   const [specialization, setSpecialization] = useState('');
   const [district, setDistrict] = useState('');
-  const [districts, setDistricts] = useState(undefined);
   const [block, setBlock] = useState(null);
-  const [blockData, setBlockData] = useState([]);
-  const [healthcareFacility, setHealthcareFacility] = useState('');
-  // const {mobileNumber, user} = route.params;
-  const {signIn} = useAuth();
+  const [healthcareFacilityType, setHealthcareFacilityType] = useState('');
+  const [healthcareFacilityName, setHealthcareFacilityName] = useState('');
+  const {mobileNumber, user} = route.params;
+  const {signIn, signUp, zimLogIn} = useAuth();
 
+  // store data requested from API
   const [apiData, setAPIData] = useState(undefined);
 
   // dropdown data
@@ -49,7 +50,7 @@ export const FillSignUpDetails = ({navigation, route}) => {
 
   // show available healthcare facilities in choosen district, block and healthcare facility
   async function showAvailableHF() {
-    if (healthcareFacility.toLowerCase() == 'phc') {
+    if (healthcareFacilityType.toLowerCase() == 'phc') {
       apiData.districts.map(d => {
         if (d.name == district) {
           d.blocks.map(b => {
@@ -63,7 +64,7 @@ export const FillSignUpDetails = ({navigation, route}) => {
           });
         }
       })
-    } else if (healthcareFacility.toLowerCase() == 'chc') {
+    } else if (healthcareFacilityType.toLowerCase() == 'chc') {
       apiData.districts.map(d => {
         if (d.name == district) {
           d.blocks.map(b => {
@@ -77,7 +78,7 @@ export const FillSignUpDetails = ({navigation, route}) => {
           });
         }
       })
-    } else if (healthcareFacility.toLowerCase() == 'ch') {
+    } else if (healthcareFacilityType.toLowerCase() == 'ch') {
       apiData.districts.map(d => {
         if (d.name == district) {
           let chNames = d.ch.map(c => {
@@ -86,7 +87,7 @@ export const FillSignUpDetails = ({navigation, route}) => {
           setShowAvailableHealthcareFacility(chNames)
         }
       });
-    } else if (healthcareFacility.toLowerCase() == 'zh') {
+    } else if (healthcareFacilityType.toLowerCase() == 'zh') {
       let zhNames = apiData.zh.map(z => {
         return z.name
       })
@@ -94,8 +95,9 @@ export const FillSignUpDetails = ({navigation, route}) => {
     }
   }
 
+  // fetch districts of Himachal Pradesh
   async function fetchDistricts() {
-    const res = await axiosInstance.get('http://localhost:3005/v1/district');
+    const res = await axiosInstance.get('district');
     setAPIData(res.data);
     res.data.districts.map(d => {
       setDistrictsName([...districtsName, d.name]);
@@ -113,9 +115,10 @@ export const FillSignUpDetails = ({navigation, route}) => {
     else if (designation == 'CMO' || designation == 'MS') setBlock(null);
   }, [district, designation]);
 
+  // runs when we choose category of HF
   useEffect(() => {
     showAvailableHF();
-  }, [healthcareFacility])
+  }, [healthcareFacilityType])
 
   const handleRegisterButton = async () => {
     try {
@@ -123,7 +126,7 @@ export const FillSignUpDetails = ({navigation, route}) => {
         fullName == '' ||
         designation == '' ||
         specialization == '' ||
-        healthcareFacility == '' ||
+        healthcareFacilityType == '' ||
         district == '' ||
         block == ''
       ) {
@@ -142,20 +145,27 @@ export const FillSignUpDetails = ({navigation, route}) => {
         return;
       }
 
-      // const res = await axiosInstance.post('doctor', {
-      //   name: fullName,
-      //   designation,
-      //   mobileNumber,
-      //   lattitude: '',
-      //   longitude: "",
-      //   specialization,
-      //   healthcareFacilityName: healthcareFacility
-      // })
-      // console.log(res.data)
+      const res = await axiosInstance.post('doctor', {
+        name: fullName,
+        mobileNumber,
+        designation,
+        specialization,
+        healthcareFacilityType,
+        healthcareFacilityName,
+        stateName: 'Himachal Pradesh',
+        districtName: district,
+        blockName: block
+      })
+      console.log(res.data)
+      await signUp(res.data)
+      await zimLogIn({
+        userID: String(res.data.id),
+        userName: String(res.data.id)
+      })
       await signIn(JSON.parse(user));
     } catch (error) {
-      Alert.alert('User already registered with mobile number');
-      console.error(error);
+      // Alert.alert('User already registered with mobile number');
+      Alert.alert(error);
     }
   };
 
@@ -318,34 +328,37 @@ export const FillSignUpDetails = ({navigation, route}) => {
               textAlign: 'left',
             }}
             onSelect={(selectedItem, index) => {
-              setHealthcareFacility(selectedItem);
+              setHealthcareFacilityType(selectedItem);
             }}
           />
         </View>
-        <View style={styles.inputDiv}>
-          <Text style={styles.label}>HEALTHCARE FACILITY NAME</Text>
-          <SelectDropdown
-            data={showAvailableHealthcareFacility}
-            buttonTextStyle={{
-              textAlign: 'left',
-              color: styleConstants.BLUE,
-              fontSize: 14,
-            }}
-            rowTextStyle={{
-              textAlign: 'left',
-              color: styleConstants.BLUE,
-            }}
-            buttonStyle={{
-              width: '100%',
-              backgroundColor: '#FFF',
-              borderRadius: 10,
-              textAlign: 'left',
-            }}
-            onSelect={(selectedItem, index) => {
-              setHealthcareFacility(selectedItem);
-            }}
-          />
-        </View>
+        {
+          healthcareFacilityType != '' &&
+          <View style={styles.inputDiv}>
+            <Text style={styles.label}>HEALTHCARE FACILITY NAME</Text>
+            <SelectDropdown
+              data={showAvailableHealthcareFacility}
+              buttonTextStyle={{
+                textAlign: 'left',
+                color: styleConstants.BLUE,
+                fontSize: 14,
+              }}
+              rowTextStyle={{
+                textAlign: 'left',
+                color: styleConstants.BLUE,
+              }}
+              buttonStyle={{
+                width: '100%',
+                backgroundColor: '#FFF',
+                borderRadius: 10,
+                textAlign: 'left',
+              }}
+              onSelect={(selectedItem, index) => {
+                setHealthcareFacilityName(selectedItem);
+              }}
+            />
+          </View>
+        }
         <View style={styles.inputDiv}>
           <Pressable
             style={styles.registerButton}

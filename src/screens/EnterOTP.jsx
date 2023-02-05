@@ -13,6 +13,7 @@ import {styleConstants} from '../constants/constant';
 import auth from '@react-native-firebase/auth';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import { useAuth } from '../context/Auth';
+import axiosInstance from '../api/axios';
 
 export const EnterOTP = ({navigation, route}) => {
   const {phoneNumber} = route.params;
@@ -31,13 +32,22 @@ export const EnterOTP = ({navigation, route}) => {
     generateOTP();
   }, []);
 
+  async function checkIfUserIsRegisteredInDb () {
+    const res = await axiosInstance.post(`doctor/find`,{
+      mobileNumber: phoneNumber
+    })
+    console.log(res.data)
+    return res.data;
+  }
+
   async function validateOTP() {
     try {
       if (confirmation != null) {
         const res = await confirmation.confirm(String(otp));
 
         // if new user navigate to sign up page, else sign in user
-        if (res.additionalUserInfo.isNewUser) {
+        const doExists = await checkIfUserIsRegisteredInDb();
+        if (doExists == false) {
           navigation.navigate('Sign Up', { mobileNumber: phoneNumber, user: JSON.stringify(res.user) })
         } 
         else {
@@ -45,7 +55,7 @@ export const EnterOTP = ({navigation, route}) => {
         }
       }
     } catch (error) {
-      Alert.alert("Incorrect OTP", "Please check again and fill the correct OTP")
+      Alert.alert(error)
       console.log('error validating OTP', error);
     }
   }
