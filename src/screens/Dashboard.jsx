@@ -19,7 +19,7 @@ import {useAuth} from '../context/Auth';
 
 export const Dashboard = ({navigation, route}) => {
   const [id, setId] = useState(undefined);
-  const {authData} = useAuth();
+  const {authData, zimLogIn} = useAuth();
   const [userData, setUserData] = useState(undefined);
   const [headerLoaded, setHeaderLoaded] = useState(false);
   const [cards, setCards] = useState([]);
@@ -34,6 +34,10 @@ export const Dashboard = ({navigation, route}) => {
       setUserData(res.data);
       setId(res.data._id);
       setHeaderLoaded(true);
+      zimLogIn({
+        userID: res.data.id,
+        userName: res.data.id
+      })
     } catch (error) {
       Alert.alert(error);
     }

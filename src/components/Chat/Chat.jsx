@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Pressable, Text } from "react-native";
+import { Alert, Pressable, Text } from "react-native";
 import { useAuth } from "../../context/Auth";
 
 export const Chat = ({ userId }) => {
@@ -26,17 +26,17 @@ export const Chat = ({ userId }) => {
       priority: 1, // Set priority for the message. 1: Low (by default). 2: Medium. 3: High.
     };
     var type = 0; // Session type. Values are: 0: One-on-one chat.  1: Chat room  2: Group chat.
-    // var notification = {
-    //   onMessageAttached: function (message) {
-    //     // todo: Loading
-        
-    //   },
-    // };
+    var notification = {
+      onMessageAttached: function (message) {
+        // todo: Loading
+        console.log(message)
+      },
+    };
 
     // Send one-to-one text messages.
     var messageTextObj = { type: 1, message: "Text message content" };
     zim
-      .sendMessage(messageTextObj, toUserID, type, config)
+      .sendMessage(messageTextObj, toUserID, type, config, notification)
       .then(function ({ message }) {
         // Message sent successfully.
         console.log('message sent successfully')
@@ -47,11 +47,22 @@ export const Chat = ({ userId }) => {
       });
   };
 
+  const getHistory = async() => {
+    const res = await zim.queryHistoryMessage(userId, 0, {
+      nextMessage: null,
+      count: 50,
+      reverse: true
+    })
+
+    console.log(res)
+  }
   useEffect(() => {
+    getHistory();
     // Set up and listen for the callback for receiving error codes.
     zim.on("error", function (zim, errorInfo) {
       console.log("error", errorInfo.code, errorInfo.message);
     });
+
 
     // Set up and listen for the callback for connection status changes.
     zim.on(
@@ -66,6 +77,7 @@ export const Chat = ({ userId }) => {
       "receivePeerMessage",
       function (zim, { messageList, fromConversationID }) {
         console.log("receivePeerMessage", messageList, fromConversationID);
+        Alert.alert('message recieved')
       }
     );
   }, []);

@@ -14,18 +14,25 @@ import auth from '@react-native-firebase/auth';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import { useAuth } from '../context/Auth';
 import axiosInstance from '../api/axios';
+import axios from 'axios';
 
 export const EnterOTP = ({navigation, route}) => {
   const {phoneNumber} = route.params;
   const [confirmation, setConfirmation] = useState(null);
+  const [otpGenerated, setOTPGenerated] = useState('')
   const [otp, setOTP] = useState('');
-  const { signIn, loading } = useAuth() 
+  const { signIn, loading, zimLogIn } = useAuth() 
 
   async function generateOTP() {
-    const generatedOTP = await auth().signInWithPhoneNumber(
-      JSON.stringify(phoneNumber),
-    );
-    setConfirmation(generatedOTP);
+    // const generatedOTP = await auth().signInWithPhoneNumber(
+    //   JSON.stringify(phoneNumber),
+    // );
+    // setConfirmation(generatedOTP);
+    const generateNewOTP = String(Math.floor(100000 + Math.random() * 900000));
+    setOTPGenerated(generateNewOTP)
+    const phone = String(phoneNumber).slice(3)
+    const res = await axios.get(`https://www.fast2sms.com/dev/bulkV2?authorization=SDjduUQYiyVlNTKwt1C0Je96hzbpnLfFovO3BrPEsakXR84xgmG0B9eZDRxwyra3h8vPXmCHk4UY1ufo&variables_values=${generateNewOTP}&route=otp&numbers=${phone}`)
+    console.log(res)
   }
 
   useEffect(() => {
@@ -42,16 +49,25 @@ export const EnterOTP = ({navigation, route}) => {
 
   async function validateOTP() {
     try {
-      if (confirmation != null) {
-        const res = await confirmation.confirm(String(otp));
+      // if (confirmation != null) {
+        if (otpGenerated == otp) {
+        // const res = await confirmation.confirm(String(otp));
 
         // if new user navigate to sign up page, else sign in user
         const doExists = await checkIfUserIsRegisteredInDb();
         if (doExists == false) {
-          navigation.navigate('Sign Up', { mobileNumber: phoneNumber, user: JSON.stringify(res.user) })
+          navigation.navigate('Sign Up', { mobileNumber: phoneNumber, user: JSON.stringify({
+            phoneNumber
+          }) })
         } 
         else {
-          signIn(res.user)
+          zimLogIn({
+            userID: '63df5c5a39aa8e40794e980f',
+            userName: '63df5c5a39aa8e40794e980f'
+          })
+          signIn({
+            phoneNumber 
+          })
         }
       }
     } catch (error) {
