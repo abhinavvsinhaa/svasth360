@@ -16,6 +16,7 @@ import {PHCSearchDashboard} from '../components/PHCSearchDashboard/PHCSearchDash
 import {ZHSearchDashboard} from '../components/ZHSearchDashboard/ZHSearchDashboard';
 import {styleConstants} from '../constants/constant';
 import {useAuth} from '../context/Auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Dashboard = ({navigation, route}) => {
   const [id, setId] = useState(undefined);
@@ -27,17 +28,19 @@ export const Dashboard = ({navigation, route}) => {
   async function fetchMyDetails() {
     try {
       // phoneNumber can be accessed with authData.phoneNumber
-      console.log(authData);
+      console.log("Dashboard" , authData);
       const res = await axiosInstance.post('doctor/me', {
         mobileNumber: authData.phoneNumber,
       });
       setUserData(res.data);
-      setId(res.data._id);
+      await AsyncStorage.setItem('@Me', JSON.stringify(res.data))
+      setId(res.data.id);
       setHeaderLoaded(true);
-      zimLogIn({
+      await zimLogIn({
         userID: res.data.id,
         userName: res.data.id
       })
+      console.log("dashboard", res.data)
     } catch (error) {
       Alert.alert(error);
     }
@@ -56,6 +59,7 @@ export const Dashboard = ({navigation, route}) => {
 
   useEffect(() => {
     fetchMyDetails();
+    fetchMyCards();
   }, []);
 
   // load cards for the doctor
@@ -66,11 +70,12 @@ export const Dashboard = ({navigation, route}) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={styleConstants.SAND} />
-      {userData && (
+      {userData != undefined && (
         <DashboardHeaderBar
           name={userData.name}
           designation={userData.designation}
           specialization={userData.specialization}
+          userId={userData.id}
         />
       )}
 

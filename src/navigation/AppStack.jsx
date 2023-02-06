@@ -1,8 +1,17 @@
 import React from 'react';
 import { TabNavigator } from './TabNavigator';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { VideoCall } from '../components/VideoCall/VideoCall';
+
+const Stack = createNativeStackNavigator();
 
 export const AppStack = () => {
   return (
-    <TabNavigator/>
+    <Stack.Navigator initialRouteName='Tab Navigator' screenOptions={{
+      headerShown: false
+    }}>
+      <Stack.Screen name='Tab Navigator' component={TabNavigator} />
+      <Stack.Screen name='Video Call' component={VideoCall} />
+    </Stack.Navigator>
   );
 };

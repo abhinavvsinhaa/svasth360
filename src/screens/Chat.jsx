@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, Text, StyleSheet, ImageBackground } from "react-native"
 import { Chat as ChatP } from "../components/Chat/Chat";
 import { ChatHeader } from "../components/Chat/ChatHeader";
@@ -11,7 +11,7 @@ export const Chat = ({ navigation, route }) => {
     }, [])
     return(
         <SafeAreaView style={styles.container}>
-            <ChatHeader/>
+            <ChatHeader name={route.params.name} navigation={navigation} mobileNumber={route.params.mobileNumber}/>
             <ImageBackground source={require('../assets/images/Splash.png')} style={{flex: 1}}>
             <ChatP userId={route.params.userId}/>
             <ChatInput/>

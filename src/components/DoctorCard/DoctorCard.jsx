@@ -33,16 +33,19 @@ export const DoctorCard = ({ name, designation, HF, userId, navigation, key, mob
                 <Pressable onPress={openDialScreen}>
                     <Image source={require("../../assets/images/VoiceCallCardIconDash.png")}/>
                 </Pressable>
-                <Pressable>
+                {/* <Pressable>
                     <Image source={require("../../assets/images/ChatCardIconDash.png")}/>
-                </Pressable>
+                </Pressable> */}
                 <Pressable onPress={() => navigation.navigate('Chat', {
-                    userId
+                    userId,
+                    name,
+                    mobileNumber,
+                    navigation
                 })}>
                     <Image source={require("../../assets/images/ChatCardIconDash.png")}/>
                 </Pressable>
-                <Pressable>
-                    <Image source={require("../../assets/images/ChatCardIconDash.png")}/>
+                <Pressable onPress={() => navigation.navigate('Video Call')}>
+                    <Image source={require("../../assets/images/VideoCallIcon.png")}/>
                 </Pressable>
             </View>
         </View>
@@ -73,7 +76,7 @@ const styles = StyleSheet.create({
         alignSelf: "flex-end",
         justifyContent: "center",
         backgroundColor: styleConstants.SAND,   
-        width: "50%",
+        width: "35%",
         borderRadius: 10,
         paddingVertical:  5
     }

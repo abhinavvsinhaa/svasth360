@@ -7,8 +7,8 @@ ZIM.create({
     appID: 1189528528,
     appSign: "f92ae0afb43b8dbaa49356a9491d1212555895cf630d197599c190581acc7ba3",
   });
-var zim = ZIM.getInstance();
 
+var zim = ZIM.getInstance();
 
 const AuthProvider = ({ children }) => {
     const [ authData, setAuthData ] = useState()

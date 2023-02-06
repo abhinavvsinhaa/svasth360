@@ -4,20 +4,7 @@ import { useAuth } from "../../context/Auth";
 
 export const Chat = ({ userId }) => {
   const { zim, userInfo } = useAuth();
-  const [userLoggedIn, setUserLoggedIn] = useState(false);
-  
-  const token =
-    "04AAAAAGPfJBIAEGo5b2F2cW4xMXhoMWJkcDYAsD98kO+fHVCTtN24HBH06cERhrBKieOin11MIEu0oH+MdyvkM1n9k9+iD9PBTREzRrPsnWzITz8g074wR7BVXuIzCS1ewkvcEWYoB1q634nGriOUNqcA+B3B83w4XfVutQKQ+DlVTw4jtr332fumW+LnLXpRC3/ojUU7dPRovIW2NVW9OJKzIrSqbxarqR5leUVq1+MUTtATE4pVAM6E8YsygjN3jah1UdhJ2oQJgCwT";
-
-  const login = () => {
-    zim
-      .login(userInfo)
-      .then(function () {
-        setUserLoggedIn(true);
-        console.log("user logged in");
-      })
-      .catch((err) => console.error("error in logging", err));
-  };
+  const [userLoggedIn, setUserLoggedIn] = useState(false)
 
   const sendMessage = () => {
     console.log(userId)

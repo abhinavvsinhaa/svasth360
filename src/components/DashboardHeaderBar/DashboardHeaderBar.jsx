@@ -1,12 +1,32 @@
-import React,  { useState } from 'react';
-import {View, Text, StyleSheet, Image, Switch} from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, StyleSheet, Image, Switch, Alert} from 'react-native';
+import axiosInstance from '../../api/axios';
 import {styleConstants} from '../../constants/constant';
 
-export const DashboardHeaderBar = ({ name, designation, specialization }) => {
+export const DashboardHeaderBar = ({
+  name,
+  designation,
+  specialization,
+  userId,
+}) => {
   const [isEnabled, setIsEnabled] = useState(false);
 
-  function handleToggle() {
+  async function setAvailabilityInDb(availability) {
+    try {
+      const res = await axiosInstance.patch('doctor/availability', {
+        userId,
+        availability: availability
+      })
+      console.log(res.data)
+    } catch (error) {
+      Alert.alert(error)
+    }
+  }
+
+  async function handleToggle() {
     setIsEnabled(!isEnabled);
+    const availability = isEnabled == false ? 'online' : 'offline';
+    setAvailabilityInDb(availability)
   }
 
   return (
@@ -58,6 +78,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontFamily: 'Poppins-SemiBold',
     marginLeft: 10,
-    fontSize: 16
+    fontSize: 16,
   },
 });

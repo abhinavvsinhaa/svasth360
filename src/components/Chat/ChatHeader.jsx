@@ -1,9 +1,19 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, Image, Text} from 'react-native';
+import {StyleSheet, View, Image, Text, Pressable, Platform, Linking} from 'react-native';
 import {styleConstants} from '../../constants/constant';
 
-export const ChatHeader = () => {
-  const [name, setName] = useState('Dr. Raj Kumar');
+export const ChatHeader = ({name, navigation, mobileNumber}) => {
+  // const [name, setName] = useState('Dr. Raj Kumar');
+  const openDialScreen = () => {
+    if (Platform.OS == 'android') {
+      const phone = `tel:${mobileNumber}`;
+      Linking.openURL(phone);
+    } else if (Platform.OS == 'ios') {
+      const phone = `telprompt:${mobileNumber}`;
+      Linking.openURL(phone);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.detailsContainer}>
@@ -14,20 +24,24 @@ export const ChatHeader = () => {
         <Text style={styles.profileName}>{name}</Text>
       </View>
       <View style={styles.iconOuterContainer}>
-        <View style={styles.iconContainer}>
-          <Image
-            source={require('../../assets/images/ChatVideoCallIcon.png')}
-          />
-        </View>
-        <View style={styles.iconContainer}>
-          <Image
-            source={require('../../assets/images/ChatVoiceCallIcon.png')}
-          />
-        </View>
+        <Pressable onPress={() => navigation.navigate('Video Call')}>
+          <View style={styles.iconContainer}>
+            <Image
+              source={require('../../assets/images/ChatVideoCallIcon.png')}
+            />
+          </View>
+        </Pressable>
+        <Pressable onPress={openDialScreen}>
+          <View style={styles.iconContainer}>
+            <Image
+              source={require('../../assets/images/ChatVoiceCallIcon.png')}
+            />
+          </View>
+        </Pressable>
         {/* <View style={styles.iconContainer}> */}
-          <Image
-            source={require('../../assets/images/ChatVerticalDotsIcon.png')}
-          />
+        <Image
+          source={require('../../assets/images/ChatVerticalDotsIcon.png')}
+        />
         {/* </View> */}
       </View>
     </View>
@@ -44,7 +58,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderRadius: 10,
-    marginHorizontal: 5
+    marginHorizontal: 5,
   },
   detailsContainer: {
     display: 'flex',
@@ -63,12 +77,12 @@ const styles = StyleSheet.create({
   },
   iconOuterContainer: {
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   iconContainer: {
     backgroundColor: '#fff',
     padding: 10,
     borderRadius: 10,
-    marginLeft: 10
+    marginLeft: 10,
   },
 });
