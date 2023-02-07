@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -7,78 +7,69 @@ import {
   Text,
   Pressable,
   Alert,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import {styleConstants} from '../constants/constant';
 import auth from '@react-native-firebase/auth';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
-import { useAuth } from '../context/Auth';
+import {useAuth} from '../context/Auth';
 import axiosInstance from '../api/axios';
 import axios from 'axios';
 
 export const EnterOTP = ({navigation, route}) => {
   const {phoneNumber} = route.params;
   const [confirmation, setConfirmation] = useState(null);
-  const [otpGenerated, setOTPGenerated] = useState('')
+  const [otpGenerated, setOTPGenerated] = useState('');
+  const [incorrectOTP, setIncorrectOTP] = useState(false);
   const [otp, setOTP] = useState('');
-  const { signIn, loading, zimLogIn } = useAuth() 
+  const {signIn, loading, zimLogIn} = useAuth();
 
   async function generateOTP() {
-    // const generatedOTP = await auth().signInWithPhoneNumber(
-    //   JSON.stringify(phoneNumber),
-    // );
-    // setConfirmation(generatedOTP);
     const generateNewOTP = String(Math.floor(100000 + Math.random() * 900000));
-    setOTPGenerated(generateNewOTP)
-    const phone = String(phoneNumber).slice(3)
-    const res = await axios.get(`https://www.fast2sms.com/dev/bulkV2?authorization=SDjduUQYiyVlNTKwt1C0Je96hzbpnLfFovO3BrPEsakXR84xgmG0B9eZDRxwyra3h8vPXmCHk4UY1ufo&variables_values=${generateNewOTP}&route=otp&numbers=${phone}`)
-    console.log(res)
+    setOTPGenerated(generateNewOTP);
+
+    // remove +91
+    const phone = String(phoneNumber).slice(3);
+
+    // generate and send OTP
+    const res = await axios.get(
+      `https://www.fast2sms.com/dev/bulkV2?authorization=SDjduUQYiyVlNTKwt1C0Je96hzbpnLfFovO3BrPEsakXR84xgmG0B9eZDRxwyra3h8vPXmCHk4UY1ufo&variables_values=${generateNewOTP}&route=otp&numbers=${phone}`,
+    );
+    console.log(res.data);
   }
+
+  async function fetchUserDataSimulatenously() {}
 
   useEffect(() => {
     generateOTP();
   }, []);
 
-  async function checkIfUserIsRegisteredInDb () {
-    const res = await axiosInstance.post(`doctor/find`,{
-      mobileNumber: phoneNumber
-    })
-    console.log(res.data)
-    return res.data;
-  }
-
   async function validateOTP() {
     try {
-      // if (confirmation != null) {
-        if (otpGenerated == otp) {
-        // const res = await confirmation.confirm(String(otp));
+      if (otpGenerated == otp) {
+        navigation.navigate('Sign Up', {
+          mobileNumber: phoneNumber,
+          user: JSON.stringify({
+            phoneNumber,
+          }),
+        });
+      }
 
-        // if new user navigate to sign up page, else sign in user
-        const doExists = await checkIfUserIsRegisteredInDb();
-        if (doExists == false) {
-          navigation.navigate('Sign Up', { mobileNumber: phoneNumber, user: JSON.stringify({
-            phoneNumber
-          }) })
-        } 
-        else {
-          zimLogIn({
-            userID: '63df5c5a39aa8e40794e980f',
-            userName: '63df5c5a39aa8e40794e980f'
-          })
-          signIn({
-            phoneNumber 
-          })
-        }
+      // incorrect otp
+      else {
+        setIncorrectOTP(true);
+        Alert.alert('Incorrect OTP', 'Please re-enter the OTP');
+        setIncorrectOTP(false);
       }
     } catch (error) {
-      Alert.alert(error)
+      Alert.alert(error);
       console.log('error validating OTP', error);
     }
   }
 
   function submitOTP(event) {
     event.preventDefault();
-    if ((otp == '')) {
+    if (otp == '') {
       Alert.alert('Invalid OTP', 'Please fill OTP again.');
       return;
     }
@@ -110,8 +101,13 @@ export const EnterOTP = ({navigation, route}) => {
         <Pressable style={styles.getOTPButton} onPress={submitOTP}>
           <Text style={styles.OTPButtonText}>Submit</Text>
         </Pressable>
+        {otpGenerated != '' && <Text style={{marginTop: 10}}>OTP Sent ✅</Text>}
         <Text style={{marginTop: 10}}>Didn't recieve the OTP? </Text>
-        <Pressable>
+        <Pressable
+          onPress={() => {
+            setOTPGenerated('');
+            generateOTP();
+          }}>
           <Text style={styles.resendText}>Resend</Text>
         </Pressable>
       </ImageBackground>
@@ -148,7 +144,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginHorizontal: 10,
     textAlign: 'center',
-    color: "#000"
+    color: '#000',
     // paddingHorizontal: 10,
     // paddingVertical: 10,
   },

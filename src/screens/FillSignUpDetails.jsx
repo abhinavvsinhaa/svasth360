@@ -157,12 +157,12 @@ export const FillSignUpDetails = ({navigation, route}) => {
         blockName: block
       })
       console.log(res.data)
-      await signUp(res.data)
+      
+      await signIn(res.data)
       await zimLogIn({
         userID: String(res.data.id),
         userName: String(res.data.id)
       })
-      await signIn(JSON.parse(user));
     } catch (error) {
       // Alert.alert('User already registered with mobile number');
       Alert.alert(error);

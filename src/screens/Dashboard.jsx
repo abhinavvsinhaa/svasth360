@@ -6,78 +6,56 @@ import {
   ScrollView,
   StatusBar,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import axiosInstance from '../api/axios';
-import {CHSearchDashboard} from '../components/CHSearchDashboard/CHSearchDashboard';
-import {DashboardHeaderBar} from '../components/DashboardHeaderBar/DashboardHeaderBar';
-import {DoctorCard} from '../components/DoctorCard/DoctorCard';
-import {MedColSearchDashboard} from '../components/MedColSearchDashboard/MedColSearchDashboard';
-import {PHCSearchDashboard} from '../components/PHCSearchDashboard/PHCSearchDashboard';
-import {ZHSearchDashboard} from '../components/ZHSearchDashboard/ZHSearchDashboard';
+import {
+  ZHSearchDashboard,
+  PHCSearchDashboard,
+  MedColSearchDashboard,
+  DoctorCard,
+  DashboardHeaderBar,
+  CHSearchDashboard,
+} from '../components';
 import {styleConstants} from '../constants/constant';
 import {useAuth} from '../context/Auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Dashboard = ({navigation, route}) => {
-  const [id, setId] = useState(undefined);
-  const {authData, zimLogIn} = useAuth();
-  const [userData, setUserData] = useState(undefined);
-  const [headerLoaded, setHeaderLoaded] = useState(false);
+  const {authData} = useAuth();
   const [cards, setCards] = useState([]);
 
-  async function fetchMyDetails() {
-    try {
-      // phoneNumber can be accessed with authData.phoneNumber
-      console.log("Dashboard" , authData);
-      const res = await axiosInstance.post('doctor/me', {
-        mobileNumber: authData.phoneNumber,
-      });
-      setUserData(res.data);
-      await AsyncStorage.setItem('@Me', JSON.stringify(res.data))
-      setId(res.data.id);
-      setHeaderLoaded(true);
-      await zimLogIn({
-        userID: res.data.id,
-        userName: res.data.id
-      })
-      console.log("dashboard", res.data)
-    } catch (error) {
-      Alert.alert(error);
-    }
-  }
-
   async function fetchMyCards() {
-    if (userData.designation == 'CMO') {
-      const res = await axiosInstance.post('doctor/cmo', {
-        stateId: userData.stateId,
-        districtId: userData.districtId,
-      });
+    try {
+      const designation = String(authData.designation).toLowerCase();
+      const res = await axiosInstance.post(
+        `doctor/cards?designation=${designation}`,
+        {
+          stateId: authData.stateId,
+          districtId: authData.districtId,
+          blockId: authData.blockId,
+          healthcareFacilityId: authData.healthcareFacilityId,
+        },
+      );
       console.log(res.data);
       setCards(res.data);
+    } catch (error) {
+      console.error(error);
     }
   }
 
   useEffect(() => {
-    fetchMyDetails();
     fetchMyCards();
   }, []);
-
-  // load cards for the doctor
-  useEffect(() => {
-    fetchMyCards();
-  }, [headerLoaded]);
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={styleConstants.SAND} />
-      {userData != undefined && (
-        <DashboardHeaderBar
-          name={userData.name}
-          designation={userData.designation}
-          specialization={userData.specialization}
-          userId={userData.id}
-        />
-      )}
+      <DashboardHeaderBar
+        name={authData.name}
+        designation={authData.designation}
+        specialization={authData.specialization}
+        userId={authData.id}
+      />
 
       <View style={styles.searchView}>
         <PHCSearchDashboard />
@@ -87,7 +65,9 @@ export const Dashboard = ({navigation, route}) => {
       </View>
 
       <ScrollView>
-        {cards != [] &&
+        {cards == [] ? (
+          <ActivityIndicator size={'small'} />
+        ) : (
           cards.map(card => {
             return (
               <DoctorCard
@@ -101,7 +81,8 @@ export const Dashboard = ({navigation, route}) => {
                 mobileNumber={card.mobileNumber}
               />
             );
-          })}
+          })
+        )}
       </ScrollView>
     </SafeAreaView>
   );

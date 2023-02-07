@@ -1,10 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Pressable, Text } from "react-native";
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { styleConstants } from "../../constants/constant";
 import { useAuth } from "../../context/Auth";
 
 export const Chat = ({ userId }) => {
   const { zim, userInfo } = useAuth();
   const [userLoggedIn, setUserLoggedIn] = useState(false)
+  const [messages, setMessages] = useState([
+    {
+      type: 'sent',
+      messageContent: 'Lorem ipsum'
+    },
+    {
+      type: 'recieved',
+      messageContent: 'Lorem ipsum'
+    }
+  ])
 
   const sendMessage = () => {
     console.log(userId)
@@ -26,6 +37,10 @@ export const Chat = ({ userId }) => {
       .sendMessage(messageTextObj, toUserID, type, config, notification)
       .then(function ({ message }) {
         // Message sent successfully.
+        setMessages([...messages, {
+          type: 'sent',
+          messageContent: messageTextObj.message
+        }])
         console.log('message sent successfully')
       })
       .catch(function (err) {
@@ -63,14 +78,74 @@ export const Chat = ({ userId }) => {
     zim.on(
       "receivePeerMessage",
       function (zim, { messageList, fromConversationID }) {
+        if (userId == fromConversationID) {
+          setMessages([...messages, {
+            type: 'recieved',
+            messageContent: messageList[0]
+          }])
+        }
         console.log("receivePeerMessage", messageList, fromConversationID);
-        Alert.alert('message recieved')
+        
       }
     );
   }, []);
   return (
-    <Pressable onPress={sendMessage}>
-        <Text>Send Message</Text>
-    </Pressable>
+    <ScrollView style={styles.container}>
+      <Pressable onPress={() => setMessages([...messages, {
+        type: 'recieved',
+        messageContent: 'lorem ipsum'
+      }])}>
+          <Text>Send Message</Text>
+      </Pressable>
+      {
+        messages != [] &&
+        messages.map(msg => {
+          if (msg.type == 'sent') {
+            return (
+              <View style={styles.sendOuterContainer}>
+                <Text style={styles.sendContainer}>Lorem Ipsum</Text>
+              </View>
+            )
+          } else {
+            return (
+              <View style={styles.recieveOuterContainer}>
+                <Text style={styles.recieveContainer}>Lorem Ipsum</Text>
+              </View>
+            )
+          }
+        })
+      }
+    </ScrollView>
   );
 };
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
+  sendOuterContainer: {
+    width: '50%',
+    alignSelf: 'flex-end',
+    margin: 10
+  },
+  recieveOuterContainer: {
+    width: '50%',
+    alignSelf: 'flex-start',
+    margin: 10
+  },
+  sendContainer: {
+    backgroundColor: styleConstants.LIGHT_BLUE,
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    color: '#fff'
+  },
+  recieveContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    color: styleConstants.LIGHT_BLUE
+  }
+})

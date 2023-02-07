@@ -9,11 +9,35 @@ import {
   Pressable,
   Alert,
 } from 'react-native';
+import axiosInstance from '../api/axios';
 import {styleConstants} from '../constants/constant';
-
+import {useAuth} from '../context/Auth';
 
 export const SignUp = ({navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState('');
+  const {signIn, zimLogIn} = useAuth();
+
+  async function checkIfUserExists() {
+    try {
+      const res = await axiosInstance.post(`doctor/find`, {
+        mobileNumber: `+91${phoneNumber}`,
+      });
+
+      // no need to enter otp if user is already registered
+      if (res.data) {
+        await signIn(res.data);
+        await zimLogIn({
+          userID: res.data.id,
+          userName: res.data.name
+        })
+        navigation.navigate('Dashboard');
+      } else {
+        navigation.navigate('Enter OTP', {phoneNumber: `+91${phoneNumber}`});
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   function handleGetOTP(event) {
     event.preventDefault();
@@ -28,8 +52,9 @@ export const SignUp = ({navigation}) => {
       );
       return;
     }
-    // signInWithPhoneNumber();
-    navigation.navigate('Enter OTP', { phoneNumber: `+91${phoneNumber}` })
+
+    // handle flow
+    checkIfUserExists();
   }
 
   return (
@@ -40,9 +65,9 @@ export const SignUp = ({navigation}) => {
         style={styles.backgroundImage}>
         <Image source={require('../assets/images/Logo.png')} />
         <Image source={require('../assets/images/SignupMob.png')} />
-        <Text style={styles.otpVerificationHeader}>OTP Verification</Text>
+        <Text style={styles.otpVerificationHeader}>Mobile Number</Text>
         <Text style={styles.otpVerificationDescription}>
-          We will send you a One Time Password on this mobile number
+          Please type your mobile number in the text field below.
         </Text>
         <TextInput
           placeholder="Enter your mobile number"
@@ -51,7 +76,7 @@ export const SignUp = ({navigation}) => {
           onChangeText={text => setPhoneNumber(text)}
         />
         <Pressable style={styles.getOTPButton} onPress={handleGetOTP}>
-          <Text style={styles.OTPButtonText}>Get OTP</Text>
+          <Text style={styles.OTPButtonText}>Next</Text>
         </Pressable>
       </ImageBackground>
     </SafeAreaView>

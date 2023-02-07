@@ -5,17 +5,26 @@ import {Navigator} from './src/navigation/Navigator';
 import {AuthProvider} from './src/context/Auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from 'react-native-splash-screen';
-import { getFCMToken, NotificationServices, requestUserPermission } from './src/utils/PushNotifications';
+import SocketService from './src/utils/socket';
 
 function App(): JSX.Element {
-  const clearAsyncStorage = async () => await AsyncStorage.clear();
+
+  // clear async storage
+  const clearAsyncStorage = async () => await AsyncStorage.removeItem('@AuthData');
 
   useEffect(() => {
-    // clearAsyncStorage();
-    SplashScreen.hide();
-    // requestUserPermission();
-    // getFCMToken();
-    // NotificationServices();
+    clearAsyncStorage();
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 2000)
+
+    // initialize socket service
+    SocketService.initializeSocket();
+
+    // handle all events
+    SocketService.on('recieve_message', (data: any) => {
+      console.log(data)
+    })
   }, []);
 
   return (

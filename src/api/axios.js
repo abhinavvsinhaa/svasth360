@@ -1,8 +1,9 @@
 import axios from "axios";
+import env from "../config/environment";
 
 const axiosInstance = axios.create({
-    // baseURL: "http://3.80.197.55:3005/v1/"
-    baseURL: "http://10.0.2.2:3005/v1/",
+    // baseURL: "http://100.25.202.112:3005/v1/"
+    baseURL: env.BASE_URL,
 })
 
 export default axiosInstance;

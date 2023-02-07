@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Image, Switch, Alert} from 'react-native';
 import axiosInstance from '../../api/axios';
 import {styleConstants} from '../../constants/constant';
+import { useAuth } from '../../context/Auth';
 
 export const DashboardHeaderBar = ({
   name,
@@ -9,6 +10,7 @@ export const DashboardHeaderBar = ({
   specialization,
   userId,
 }) => {
+  const { authData } = useAuth();
   const [isEnabled, setIsEnabled] = useState(false);
 
   async function setAvailabilityInDb(availability) {
@@ -28,6 +30,11 @@ export const DashboardHeaderBar = ({
     const availability = isEnabled == false ? 'online' : 'offline';
     setAvailabilityInDb(availability)
   }
+
+  useEffect(() => {
+    
+    authData.availability == 'online' ? setIsEnabled(true) : setIsEnabled(false)
+  }, [])
 
   return (
     <View style={styles.topBar}>
