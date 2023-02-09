@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect, createContext, Children, useContext } from "react";
 import ZIM from "zego-zim-react-native";
+import SocketService from "../utils/socket";
 
 const AuthContext = createContext()
 ZIM.create({
@@ -15,8 +16,12 @@ const AuthProvider = ({ children }) => {
     const [ loading, setLoading ] = useState(true)
     const [ userInfo, setUserInfo ] = useState()
 
+    
     useEffect(() => {
         loadStorageData();
+        
+        // initialize socket service
+        SocketService.initializeSocket();
     }, [])
 
     async function loadStorageData() {

@@ -2,7 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Image, Switch, Alert} from 'react-native';
 import axiosInstance from '../../api/axios';
 import {styleConstants} from '../../constants/constant';
-import { useAuth } from '../../context/Auth';
+import {useAuth} from '../../context/Auth';
+import SocketService from '../../utils/socket';
 
 export const DashboardHeaderBar = ({
   name,
@@ -10,31 +11,33 @@ export const DashboardHeaderBar = ({
   specialization,
   userId,
 }) => {
-  const { authData } = useAuth();
+  const {authData} = useAuth();
   const [isEnabled, setIsEnabled] = useState(false);
 
   async function setAvailabilityInDb(availability) {
     try {
       const res = await axiosInstance.patch('doctor/availability', {
         userId,
-        availability: availability
-      })
-      console.log(res.data)
+        availability: availability,
+      });
+      console.log(res.data);
     } catch (error) {
-      Alert.alert(error)
+      Alert.alert(error);
     }
   }
 
   async function handleToggle() {
     setIsEnabled(!isEnabled);
     const availability = isEnabled == false ? 'online' : 'offline';
-    setAvailabilityInDb(availability)
+    setAvailabilityInDb(availability);
   }
 
   useEffect(() => {
-    
-    authData.availability == 'online' ? setIsEnabled(true) : setIsEnabled(false)
-  }, [])
+
+    authData.availability == 'online'
+      ? setIsEnabled(true)
+      : setIsEnabled(false);
+  }, []);
 
   return (
     <View style={styles.topBar}>

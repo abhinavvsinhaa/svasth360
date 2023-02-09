@@ -19,6 +19,7 @@ import {
 } from '../components';
 import {styleConstants} from '../constants/constant';
 import {useAuth} from '../context/Auth';
+import SocketService from '../utils/socket';
 
 export const Dashboard = ({navigation, route}) => {
   const {authData} = useAuth();
@@ -44,6 +45,17 @@ export const Dashboard = ({navigation, route}) => {
   }
 
   useEffect(() => {
+    SocketService.emit('combine', {
+      userId: authData.id
+    })
+
+    SocketService.on('join_room', (data) => {
+      console.log('INCOMINGGGGGGG')
+      navigation.navigate('Video Call', {
+        channel: data.channel
+      })
+    })
+
     fetchMyCards();
   }, []);
 

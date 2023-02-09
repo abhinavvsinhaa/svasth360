@@ -30,7 +30,7 @@ export const SignUp = ({navigation}) => {
           userID: res.data.id,
           userName: res.data.name
         })
-        navigation.navigate('Dashboard');
+        navigation.navigate('Tab Navigator');
       } else {
         navigation.navigate('Enter OTP', {phoneNumber: `+91${phoneNumber}`});
       }

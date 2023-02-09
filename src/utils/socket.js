@@ -8,7 +8,7 @@ class WSService {
         try {
             this.socket = io(SOCKET_URL, {
                 transports: ['websocket']
-            })
+            })            
             
             this.socket.on('connect', data => {
                 console.log('Socket connected')
