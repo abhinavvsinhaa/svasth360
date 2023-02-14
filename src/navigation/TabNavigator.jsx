@@ -4,6 +4,7 @@ import {Image} from 'react-native';
 import {styleConstants} from '../constants/constant';
 import { Profile, Appointment, Notifications, Dashboard, FillSignUpDetails, Chat } from "../screens"
 import { ZegoChat } from '../components/Chat/Chat';
+import ChatHeads from '../components/Chat/ChatHeads';
 
 const Tab = createBottomTabNavigator();
 
@@ -66,7 +67,7 @@ export const TabNavigator = () => {
       /> */}
       <Tab.Screen
         name="Chat"
-        component={Chat}
+        component={ChatHeads}
         options={{
           tabBarIcon: ({focused, color, size}) => {
             return (

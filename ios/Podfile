@@ -14,7 +14,7 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'svasth360' do
+target 'Svasth360HAS' do
   config = use_native_modules!
   use_frameworks! :linkage => :static
 
@@ -37,7 +37,7 @@ target 'svasth360' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'svasth360Tests' do
+  target 'Svasth360HASTests' do
     inherit! :complete
     # Pods for testing
   end

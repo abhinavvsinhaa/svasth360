@@ -48,7 +48,7 @@ export const Profile = () => {
 
   useEffect(() => {
     async function getUser() {
-      const data = await AsyncStorage.getItem('@Me');
+      const data = await AsyncStorage.getItem('@AuthData');
       console.log('profile', data);
       setUserData(JSON.parse(data));
       setDesignation(JSON.parse(data.designation));

@@ -1,57 +1,43 @@
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import messaging from '@react-native-firebase/messaging';
+import messaging from '@react-native-firebase/messaging';
+import {Platform, PermissionsAndroid} from 'react-native';
+import {useAuth} from '../context/Auth';
 
-// export async function requestUserPermission() {
-//   const authStatus = await messaging().requestPermission();
-//   const enabled =
-//     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-//     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+// const {pushNotificationStatus, setPushNotificationStatus} = useAuth();
 
-//   if (enabled) {
-//     console.log('Authorization status:', authStatus);
-//   }
-// }
+async function requestUserPermission() {
+  if (Platform.OS == 'android') {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+    );
 
-// export const getFCMToken = async () => {
-//   let fcmToken = await AsyncStorage.getItem('@FCMToken');
-//   console.log(fcmToken)
-//   if (!fcmToken) {
-//     try {
-//         messaging().registerDeviceForRemoteMessages().then(async () => {
-//             const fcmToken = await messaging().getToken();
-//             console.log(fcmToken);
-//             if (fcmToken) {
-//               await AsyncStorage.setItem('@FCMToken', fcmToken);
-//             }
-//         })
-//     } catch (error) {
-//       console.error(error);
-//     }
-//   }
-// };
+    if (granted == PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('Push Notification status:', granted);
+      return true;
+    } else return false;
+  } else if (Platform.OS == 'ios') {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-// export const NotificationServices = () => {
-//   messaging().onNotificationOpenedApp(remoteMessage => {
-//     console.log(
-//       'Notification caused app to open from background state:',
-//       remoteMessage.notification,
-//     );
-//     navigation.navigate(remoteMessage.data.type);
-//   });
+    if (enabled) {
+      console.log('Push Notification status:', authStatus);
+      return true;
+    } else return false;
+  }
+}
 
-//   messaging().onMessage(async remoteMessage => {
-//     Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-//   });
+export async function getFCMToken() {
+  // if (!messaging().isDeviceRegisteredForRemoteMessages) {
+    await messaging().registerDeviceForRemoteMessages()
+    const token = await messaging().getToken()
+    console.log('FCM Token', token)
+  // }
+}
 
-//   // Check whether an initial notification is available
-//   messaging()
-//     .getInitialNotification()
-//     .then(remoteMessage => {
-//       if (remoteMessage) {
-//         console.log(
-//           'Notification caused app to open from quit state:',
-//           remoteMessage.notification,
-//         );
-//       }
-//     });
-// };
+export async function handlePushNotifications() {
+  const enabled = await requestUserPermission();
+  if (enabled) await getFCMToken()
+  return enabled;
+}
+

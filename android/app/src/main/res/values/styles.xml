@@ -4,7 +4,6 @@
         <!-- Customize your theme here. -->
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
         <item name="android:navigationBarColor">#213E72</item>
-        <item name="android:statusBarColor">#F6F4EB</item>
     </style>
 
 </resources>

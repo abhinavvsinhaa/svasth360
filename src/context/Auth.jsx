@@ -15,6 +15,7 @@ const AuthProvider = ({ children }) => {
     const [ authData, setAuthData ] = useState()
     const [ loading, setLoading ] = useState(true)
     const [ userInfo, setUserInfo ] = useState()
+    const [ pushNotificationStatus, setPushNotificationStatus ] = useState(false)
 
     
     useEffect(() => {
@@ -77,7 +78,7 @@ const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ authData, loading, signIn, signOut, signUp, setUserInfo, userInfo, zimLogIn, zim }}>
+        <AuthContext.Provider value={{ authData, loading, signIn, signOut, signUp, setUserInfo, userInfo, zimLogIn, zim, pushNotificationStatus, setPushNotificationStatus }}>
             {children}
         </AuthContext.Provider>
     )

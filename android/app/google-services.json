@@ -7,6 +7,50 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:119073131266:android:9ae6925ac27b98d234101b",
+        "android_client_info": {
+          "package_name": "com.abhinavsinha.svasth360has"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "119073131266-h6m9iqa44nea6m4pumg0l6f5blv9odfn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.abhinavsinha.svasth360has",
+            "certificate_hash": "87cc12310ae3ddd4821d745a92affb48b7b942e1"
+          }
+        },
+        {
+          "client_id": "119073131266-9a11ue4fon8atp34aufjs7q2gtnf5nre.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCP_XHN0Eq7PvbKeZ9oECUW4ETOSSkXphg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "119073131266-9a11ue4fon8atp34aufjs7q2gtnf5nre.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "119073131266-c0g19hsa3foss42megtb5964njr2q9ts.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.svasth360"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:119073131266:android:01442ec637aab22134101b",
         "android_client_info": {
           "package_name": "com.svasth360"

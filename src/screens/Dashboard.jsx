@@ -61,7 +61,6 @@ export const Dashboard = ({navigation, route}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor={styleConstants.SAND} />
       <DashboardHeaderBar
         name={authData.name}
         designation={authData.designation}
@@ -104,6 +103,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: styleConstants.SAND,
+    paddingVertical: 10
   },
   searchView: {
     display: 'flex',

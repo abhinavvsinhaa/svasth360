@@ -1,7 +1,7 @@
-  <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.svasth360">
+  <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.abhinavsinha.svasth360has">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- <uses-permission
+    <uses-permission
       android:name="android.permission.CAMERA"
     />
     <uses-permission
@@ -9,7 +9,7 @@
     />
     <uses-permission
       android:name="android.permission.READ_EXTERNAL_STORAGE"
-    /> -->
+    />
 
     <application
       android:name=".MainApplication"

@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Provider as PaperProvider} from 'react-native-paper';
 import {Navigator} from './src/navigation/Navigator';
 import {AuthProvider} from './src/context/Auth';
@@ -8,8 +8,12 @@ import SplashScreen from 'react-native-splash-screen';
 import SocketService from './src/utils/socket';
 import RNCallKeep from 'react-native-callkeep';
 import { Alert, PermissionsAndroid } from 'react-native';
+import { handlePushNotifications } from './src/utils/PushNotifications';
+import messaging from '@react-native-firebase/messaging'
 
 function App(): JSX.Element {
+
+  const [grantedPushNotifications, setGrantedPushNotifications] = useState<boolean>(false)
 
   const options = {
     ios: {
@@ -62,6 +66,14 @@ function App(): JSX.Element {
       console.error(error)
     }
   }
+
+  const pushNotifications = async () => {
+    const grant:any = await handlePushNotifications()
+    setGrantedPushNotifications(grant)
+    if (grant) return true
+    return false
+  }
+
   // clear async storage
   const clearAsyncStorage = async () => await AsyncStorage.removeItem('@AuthData');
   
@@ -71,14 +83,25 @@ function App(): JSX.Element {
       SplashScreen.hide();
     }, 2000)
 
-    // setupCall();
-    
-
-    // handle all events
-    SocketService.on('recieve_message', (data: any) => {
-      console.log(data)
-    })
+    pushNotifications();
   }, []);
+
+  useEffect(() => {
+    if (grantedPushNotifications) {
+      console.log('called');
+      
+
+      const unsubscribe = messaging().onMessage(async remoteMessage => {
+        console.log('message arrived', remoteMessage)
+      })
+  
+      messaging().setBackgroundMessageHandler(async remoteMessage => {
+        console.log('message arrived in background', remoteMessage)
+      })
+
+      return unsubscribe;
+    }
+  }, [grantedPushNotifications])
 
   return (
     <AuthProvider>

@@ -2,6 +2,7 @@ import React from 'react';
 import { TabNavigator } from './TabNavigator';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { VideoCall } from '../components/VideoCall/VideoCall';
+import { Chat } from '../screens';
 
 const Stack = createNativeStackNavigator();
 
@@ -12,6 +13,7 @@ export const AppStack = () => {
     }}>
       <Stack.Screen name='Tab Navigator' component={TabNavigator} />
       <Stack.Screen name='Video Call' component={VideoCall} />
+      <Stack.Screen name='Personal Chat' component={Chat} />
     </Stack.Navigator>
   );
 };

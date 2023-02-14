@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderRadius: 10,
     marginHorizontal: 5,
+    marginTop: 10
   },
   detailsContainer: {
     display: 'flex',

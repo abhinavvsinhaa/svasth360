@@ -10,103 +10,161 @@ import {
   TextInput,
   Image,
 } from 'react-native';
+import axiosInstance from '../api/axios';
 import {Chat as ChatP} from '../components/Chat/Chat';
 import {ChatHeader} from '../components/Chat/ChatHeader';
 import {ChatInput} from '../components/Chat/ChatInput';
 import {styleConstants} from '../constants/constant';
 import {useAuth} from '../context/Auth';
+import SocketService from '../utils/socket';
+import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
+import AWS from 'aws-sdk';
+import decode from 'base64-arraybuffer';
+import RNFS from 'react-native-fs';
+import {RNS3} from 'react-native-aws3';
 
 export const Chat = ({navigation, route}) => {
-  const {zim, userInfo} = useAuth();
-  const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const {userId} = route.params;
+  const {authData} = useAuth();
+  const [messages, setMessages] = useState([]);
   const [messageBody, setMessageBody] = useState('');
-  const [messages, setMessages] = useState([
-    {
-      type: 'sent',
-      messageContent: 'Lorem ipsum',
-    },
-    {
-      type: 'recieved',
-      messageContent: 'Lorem ipsum',
-    },
-  ]);
+  const [conversationId, setConversationId] = useState('');
 
-  const sendMessage = () => {
-    var toUserID = route.params.userId;
-    var config = {
-      priority: 1, // Set priority for the message. 1: Low (by default). 2: Medium. 3: High.
-    };
-    var type = 0; // Session type. Values are: 0: One-on-one chat.  1: Chat room  2: Group chat.
-    var notification = {
-      onMessageAttached: function (message) {
-        // todo: Loading
-        console.log(message);
-      },
+  AWS.config.update({
+    region: 'ap-south-1',
+    credentials: {
+      accessKeyId: 'AKIAQMEXTK3GWN6G3MQC',
+      secretAccessKey: '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',
+    },
+    signatureVersion: 'v4',
+  });
+
+  async function fetchConversation() {
+    const response = await axiosInstance.get(
+      `conversation?userId1=${userId}&userId2=${authData.id}`,
+    );
+    setMessages(response.data.messages);
+    setConversationId(response.data.id);
+  }
+
+  async function sendMessage() {
+    const payload = {
+      conversationId,
+      type: 0,
+      content: messageBody,
+      timestamp: new Date(),
+      sender: authData.id,
+      reciever: userId,
     };
 
-    setMessages([
-      ...messages,
+    SocketService.emit('send_message', payload);
+    const response = await axiosInstance.patch('conversation', payload);
+    setMessages([...messages, payload]);
+  }
+
+  const uploadImageToS3Bucket = async file => {
+    try {
+      console.log('upload image to s3');
+      console.log(file);
+
+      // let contentType = 'image/jpeg';
+      // let contentDeposition = 'inline;filename="' + file.name + '"';
+      // const base64 = await RNFS.readFile(file.uri, 'base64');
+      // const arrayBuffer = await decode(base64);
+
+      // const s3 = new AWS.S3({
+      //   region: 'ap-south-1',
+      //   logger: console
+      // });
+      // console.log("her", Object.getOwnPropertyNames(AWS.S3.prototype))
+      // s3.upload({
+      //   Bucket: 'svasth360has-chat',
+      //   Key: file.name,
+      //   Body: arrayBuffer,
+      //   ContentDisposition: contentDeposition,
+      //   ContentType: contentType
+      // }, (err, data) => {
+      //   if (err) console.error(err)
+      //   else console.log(data)
+      // });
+      // const options = {
+      //   keyPrefix: "/",
+      //   bucket: "svasth360has-chat",
+      //   region: "ap-south-1",
+      //   accessKey: "AKIAQMEXTK3G5VXPYNWB",
+      //   secretKey: "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",
+      //   successActionStatus: 201
+      // }
+
+      // RNS3.put(file, options).then(response => {
+      //   if (response.status !== 201)
+      //     throw new Error("Failed to upload image to S3");
+      //   console.log(response.body);
+      // })
+    } catch (error) {
+      console.error(error);
+    }
+    // s3Bucket.createBucket({}, () => {
+    //   const params = {
+    //     Bucket: '',
+    //     Key: file.name,
+    //     Body: arrayBuffer,
+    //     ContentDisposition: contentDeposition,
+    //     ContentType: contentType,
+    //   };
+    // });
+  };
+
+  const cameraLaunch = async () => {
+    launchCamera(response => {
+      console.log(response);
+    });
+  };
+
+  const launchLibrary = async () => {
+    launchImageLibrary(
       {
-        type: 'sent',
-        messageContent: messageBody,
+        mediaType: 'photo',
       },
-    ]);
-    // Send one-to-one text messages.
-    var messageTextObj = {type: 1, message: messageBody};
-    zim
-      .sendMessage(messageTextObj, toUserID, type, config, notification)
-      .then(function ({message}) {
-        // Message sent successfully.
-
-        console.log('message sent successfully');
-      })
-      .catch(function (err) {
-        // Failed to send the message.
-        console.error('err in sending message', err);
-      });
-  };
-
-  const getHistory = async () => {
-    const res = await zim.queryHistoryMessage(route.params.userId, 0, {
-      nextMessage: null,
-      count: 50,
-      reverse: true,
-    });
-
-    console.log(res);
-  };
-  useEffect(() => {
-    getHistory();
-    // Set up and listen for the callback for receiving error codes.
-    zim.on('error', function (zim, errorInfo) {
-      console.log('error', errorInfo.code, errorInfo.message);
-    });
-
-    // Set up and listen for the callback for connection status changes.
-    zim.on(
-      'connectionStateChanged',
-      function (zim, {state, event, extendedData}) {
-        console.log('connectionStateChanged', state, event, extendedData);
-      },
-    );
-
-    // Set up and listen for the callback for receiving one-to-one messages.
-    zim.on(
-      'receivePeerMessage',
-      function (zim, {messageList, fromConversationID}) {
-        if (userId == fromConversationID) {
-          setMessages([
-            ...messages,
-            {
-              type: 'recieved',
-              messageContent: messageList[0],
-            },
-          ]);
+      async response => {
+        if (response.assets) {
+          const res = response.assets[0];
+          // const file = {
+          //   uri: res.uri,
+          //   name: res.fileName,
+          //   type: 'image/jpeg'
+          // }
+          const data = new FormData();
+          data.append('name', 'avatar');
+          data.append('fileData', {
+            uri: res.uri,
+            type: res.type,
+            name: res.fileName,
+          });
+          const re = await axiosInstance.post('upload', data)
+          console.log(re)
         }
-        console.log('receivePeerMessage', messageList, fromConversationID);
+        // await uploadImageToS3Bucket(file)
       },
     );
+
+    // if (response) {
+    //   console.log(response)
+    // }
+  };
+
+  useEffect(() => {
+    fetchConversation();
+    // uploadImageToS3Bucket();
+
+    SocketService.on('recieve_message', data => {
+      console.log('recieve', data);
+      const msgs = messages;
+      msgs.push(data);
+      setMessages(msgs);
+    });
   }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <ChatHeader
@@ -132,19 +190,17 @@ export const Chat = ({navigation, route}) => {
             <Text>Send Message</Text>
           </Pressable> */}
           {messages != [] &&
-            messages.map(msg => {
-              if (msg.type == 'sent') {
+            messages.map((msg, i) => {
+              if (msg.sender == authData.id) {
                 return (
-                  <View style={styles.sendOuterContainer}>
-                    <Text style={styles.sendContainer}>
-                      {msg.messageContent}
-                    </Text>
+                  <View style={styles.sendOuterContainer} key={i}>
+                    <Text style={styles.sendContainer}>{msg.content}</Text>
                   </View>
                 );
               } else {
                 return (
-                  <View style={styles.recieveOuterContainer}>
-                    <Text style={styles.recieveContainer}>Lorem Ipsum</Text>
+                  <View style={styles.recieveOuterContainer} key={i}>
+                    <Text style={styles.recieveContainer}>{msg.content}</Text>
                   </View>
                 );
               }
@@ -158,14 +214,18 @@ export const Chat = ({navigation, route}) => {
             style={styles.input}
           />
           <View style={styles.attachOuterContainer}>
-            <Image
-              source={require('../assets/images/ChatCameraAttachIcon.png')}
-            />
+            <Pressable onPress={cameraLaunch}>
+              <Image
+                source={require('../assets/images/ChatCameraAttachIcon.png')}
+              />
+            </Pressable>
           </View>
           <View style={styles.attachOuterContainer}>
-            <Image source={require('../assets/images/ChatAttachIcon.png')} />
+            <Pressable onPress={launchLibrary}>
+              <Image source={require('../assets/images/ChatAttachIcon.png')} />
+            </Pressable>
           </View>
-          <Pressable onPress={sendMessage} style={styles.attachOuterContainer}>
+          <Pressable style={styles.attachOuterContainer} onPress={sendMessage}>
             <View>
               <Image
                 source={require('../assets/images/ChatSendIcon.png')}
@@ -187,19 +247,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sendOuterContainer: {
-    width: '50%',
+    maxWidth: '50%',
     alignSelf: 'flex-end',
-    margin: 10,
+    marginTop: 7,
+    marginRight: 5,
   },
   recieveOuterContainer: {
-    width: '50%',
+    maxWidth: '50%',
     alignSelf: 'flex-start',
-    margin: 10,
+    marginTop: 7,
+    marginLeft: 5,
   },
   sendContainer: {
     backgroundColor: styleConstants.LIGHT_BLUE,
     borderRadius: 10,
-    paddingVertical: 10,
+    paddingVertical: 8,
     paddingHorizontal: 15,
     color: '#fff',
   },

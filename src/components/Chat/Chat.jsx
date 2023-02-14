@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Socket } from "socket.io-client";
 import { styleConstants } from "../../constants/constant";
 import { useAuth } from "../../context/Auth";
+import SocketService from "../../utils/socket";
 
 export const Chat = ({ userId }) => {
   const { zim, userInfo } = useAuth();
@@ -58,7 +60,31 @@ export const Chat = ({ userId }) => {
 
     console.log(res)
   }
+
+  const sendMessageCustom =  async() => {
+    SocketService.emit('send_message', {
+      userId,
+      message: {
+        timestamp: new Date(),
+        type: 0, // 0 -> for text message, 1 for media messages
+        content: 'lorem ipsum'
+      }
+    })
+  }
+
   useEffect(() => {
+    SocketService.emit('connect_user', {
+      userId
+    })
+
+    SocketService.on('connection_status', data => {
+      console.log("Is socket connected", data)
+    })
+
+    SocketService.on('recieve_message', data => {
+
+    })
+
     getHistory();
     // Set up and listen for the callback for receiving error codes.
     zim.on("error", function (zim, errorInfo) {

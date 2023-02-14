@@ -12,7 +12,6 @@ import {
 import {styleConstants} from '../../constants/constant';
 import SocketService from '../../utils/socket';
 import {v4 as uuidv4} from 'uuid';
-import axios from 'axios';
 
 export const DoctorCard = ({
   name,
@@ -20,7 +19,6 @@ export const DoctorCard = ({
   HF,
   userId,
   navigation,
-  key,
   mobileNumber,
 }) => {
   const [rtcToken, setRTCToken] = useState('');
@@ -48,9 +46,9 @@ export const DoctorCard = ({
       console.log('roomId', uid);
       SocketService.emit('create_room', {
         channel: uid,
-        userId
+        userId,
       });
-      
+
       navigation.navigate('Video Call', {
         channel: uid,
       });
@@ -60,7 +58,7 @@ export const DoctorCard = ({
   };
 
   return (
-    <View style={styles.cardContainer} key={key}>
+    <View style={styles.cardContainer}>
       <View style={styles.doctorDetailsOuterContainer}>
         <View style={styles.doctorDetailContainer}>
           <Image
@@ -84,15 +82,17 @@ export const DoctorCard = ({
                     <Image source={require("../../assets/images/ChatCardIconDash.png")}/>
                 </Pressable> */}
         <Pressable
-          onPress={
-            () => createRoom()
-            // navigation.navigate('Chat', {
-            //   userId,
-            //   name,
-            //   mobileNumber,
-            //   navigation,
-            // })
-          }>
+          onPress={() => {
+            navigation.navigate(
+              'Personal Chat',
+              {
+                userId,
+                name,
+                mobileNumber,
+                navigation,
+              },
+            );
+          }}>
           <Image source={require('../../assets/images/ChatCardIconDash.png')} />
         </Pressable>
         <Pressable onPress={fetchAgoraToken}>
