@@ -6,5 +6,6 @@ import {FillSignUpDetails} from "./FillSignUpDetails"
 import {Notifications} from "./Notifications"
 import {Profile} from "./Profile"
 import {SignUp} from "./SignUp"
+import { Search } from "./Search"
 
-export { Appointment, Chat, Dashboard, EnterOTP, FillSignUpDetails, Notifications, Profile, SignUp }
+export { Appointment, Chat, Dashboard, EnterOTP, FillSignUpDetails, Notifications, Profile, SignUp, Search }

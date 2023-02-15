@@ -1,5 +1,6 @@
 import messaging from '@react-native-firebase/messaging';
 import {Platform, PermissionsAndroid} from 'react-native';
+import axiosInstance from '../api/axios';
 import {useAuth} from '../context/Auth';
 
 // const {pushNotificationStatus, setPushNotificationStatus} = useAuth();
@@ -27,17 +28,22 @@ async function requestUserPermission() {
   }
 }
 
-export async function getFCMToken() {
+export async function getFCMToken(userId) {
   // if (!messaging().isDeviceRegisteredForRemoteMessages) {
     await messaging().registerDeviceForRemoteMessages()
     const token = await messaging().getToken()
+    const res = await axiosInstance.post('doctor/fcm', {
+      token,
+      userId
+    })
+    console.log('updated fcm token', res.data)
     console.log('FCM Token', token)
   // }
 }
 
-export async function handlePushNotifications() {
+export async function handlePushNotifications(userId) {
   const enabled = await requestUserPermission();
-  if (enabled) await getFCMToken()
+  if (enabled) await getFCMToken(userId)
   return enabled;
 }
 

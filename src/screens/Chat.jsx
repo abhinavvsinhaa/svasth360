@@ -9,6 +9,7 @@ import {
   View,
   TextInput,
   Image,
+  Linking,
 } from 'react-native';
 import axiosInstance from '../api/axios';
 import {Chat as ChatP} from '../components/Chat/Chat';
@@ -18,10 +19,8 @@ import {styleConstants} from '../constants/constant';
 import {useAuth} from '../context/Auth';
 import SocketService from '../utils/socket';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
-import AWS from 'aws-sdk';
-import decode from 'base64-arraybuffer';
-import RNFS from 'react-native-fs';
-import {RNS3} from 'react-native-aws3';
+import storage from '@react-native-firebase/storage';
+import {v4 as uuid} from 'uuid'
 
 export const Chat = ({navigation, route}) => {
   const {userId} = route.params;
@@ -47,11 +46,11 @@ export const Chat = ({navigation, route}) => {
     setConversationId(response.data.id);
   }
 
-  async function sendMessage() {
+  async function sendMessage(type = 0, content = messageBody) {
     const payload = {
       conversationId,
-      type: 0,
-      content: messageBody,
+      type,
+      content,
       timestamp: new Date(),
       sender: authData.id,
       reciever: userId,
@@ -61,59 +60,6 @@ export const Chat = ({navigation, route}) => {
     const response = await axiosInstance.patch('conversation', payload);
     setMessages([...messages, payload]);
   }
-
-  const uploadImageToS3Bucket = async file => {
-    try {
-      console.log('upload image to s3');
-      console.log(file);
-
-      // let contentType = 'image/jpeg';
-      // let contentDeposition = 'inline;filename="' + file.name + '"';
-      // const base64 = await RNFS.readFile(file.uri, 'base64');
-      // const arrayBuffer = await decode(base64);
-
-      // const s3 = new AWS.S3({
-      //   region: 'ap-south-1',
-      //   logger: console
-      // });
-      // console.log("her", Object.getOwnPropertyNames(AWS.S3.prototype))
-      // s3.upload({
-      //   Bucket: 'svasth360has-chat',
-      //   Key: file.name,
-      //   Body: arrayBuffer,
-      //   ContentDisposition: contentDeposition,
-      //   ContentType: contentType
-      // }, (err, data) => {
-      //   if (err) console.error(err)
-      //   else console.log(data)
-      // });
-      // const options = {
-      //   keyPrefix: "/",
-      //   bucket: "svasth360has-chat",
-      //   region: "ap-south-1",
-      //   accessKey: "AKIAQMEXTK3G5VXPYNWB",
-      //   secretKey: "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",
-      //   successActionStatus: 201
-      // }
-
-      // RNS3.put(file, options).then(response => {
-      //   if (response.status !== 201)
-      //     throw new Error("Failed to upload image to S3");
-      //   console.log(response.body);
-      // })
-    } catch (error) {
-      console.error(error);
-    }
-    // s3Bucket.createBucket({}, () => {
-    //   const params = {
-    //     Bucket: '',
-    //     Key: file.name,
-    //     Body: arrayBuffer,
-    //     ContentDisposition: contentDeposition,
-    //     ContentType: contentType,
-    //   };
-    // });
-  };
 
   const cameraLaunch = async () => {
     launchCamera(response => {
@@ -129,28 +75,19 @@ export const Chat = ({navigation, route}) => {
       async response => {
         if (response.assets) {
           const res = response.assets[0];
-          // const file = {
-          //   uri: res.uri,
-          //   name: res.fileName,
-          //   type: 'image/jpeg'
-          // }
-          const data = new FormData();
-          data.append('name', 'avatar');
-          data.append('fileData', {
-            uri: res.uri,
-            type: res.type,
-            name: res.fileName,
+
+          const uid = await uuid();
+          const reference = storage().ref(`${uid}.png`);
+          const task = reference.putFile(res.uri);
+          task.then(async () => {
+            console.log('Image uploaded');
+            const url = await reference.getDownloadURL()
+            sendMessage(1, url)
+            console.log('download url', url);
           });
-          const re = await axiosInstance.post('upload', data)
-          console.log(re)
         }
-        // await uploadImageToS3Bucket(file)
       },
     );
-
-    // if (response) {
-    //   console.log(response)
-    // }
   };
 
   useEffect(() => {
@@ -177,30 +114,42 @@ export const Chat = ({navigation, route}) => {
         style={{flex: 1}}>
         {/* <ChatP userId={route.params.userId}/> */}
         <ScrollView style={styles.container}>
-          {/* <Pressable
-            onPress={() =>
-              setMessages([
-                ...messages,
-                {
-                  type: 'recieved',
-                  messageContent: 'lorem ipsum',
-                },
-              ])
-            }>
-            <Text>Send Message</Text>
-          </Pressable> */}
           {messages != [] &&
             messages.map((msg, i) => {
               if (msg.sender == authData.id) {
                 return (
                   <View style={styles.sendOuterContainer} key={i}>
-                    <Text style={styles.sendContainer}>{msg.content}</Text>
+                    {
+                      msg.type == 0 &&
+                      <Text style={styles.sendContainer}>{msg.content}</Text>
+                    }
+                    {
+                      msg.type == 1 &&
+                      <Pressable style={styles.sendContainer} onPress={() => { 
+                        Linking.openURL(msg.content)
+                       }}>
+                        <Image source={require('../assets/images/imageIcon.png')} style={{ height: 50, width: 50 }}/>
+                        <Text style={{ color: '#fff', marginLeft: 5 }}>View Image</Text>
+                      </Pressable>
+                    }
                   </View>
                 );
               } else {
                 return (
                   <View style={styles.recieveOuterContainer} key={i}>
-                    <Text style={styles.recieveContainer}>{msg.content}</Text>
+                    {
+                      msg.type == 0 &&
+                      <Text style={styles.recieveContainer}>{msg.content}</Text>
+                    }
+                    {
+                      msg.type == 1 &&
+                      <Pressable style={styles.recieveContainer} onPress={() => { 
+                        Linking.openURL(msg.content)
+                       }}>
+                        <Image source={require('../assets/images/imageIcon.png')} style={{ height: 50, width: 50 }}/>
+                        <Text style={{ color: `${styleConstants.BLUE}`, marginLeft: 5 }}>View Image</Text>
+                      </Pressable>
+                    }
                   </View>
                 );
               }
@@ -259,18 +208,21 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   sendContainer: {
-    backgroundColor: styleConstants.LIGHT_BLUE,
+    backgroundColor: styleConstants.BLUE,
     borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 15,
     color: '#fff',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   recieveContainer: {
     backgroundColor: '#fff',
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 15,
-    color: styleConstants.LIGHT_BLUE,
+    color: styleConstants.BLUE,
   },
   container2: {
     position: 'absolute',

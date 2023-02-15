@@ -83,25 +83,35 @@ function App(): JSX.Element {
       SplashScreen.hide();
     }, 2000)
 
-    pushNotifications();
+    // pushNotifications();
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log('message arrived', remoteMessage)
+      Alert.alert('INCOMINGG')
+    })
+
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      console.log('message arrived in background', remoteMessage)
+    })
+
+    return unsubscribe;
   }, []);
 
-  useEffect(() => {
-    if (grantedPushNotifications) {
-      console.log('called');
+  // useEffect(() => {
+  //   if (grantedPushNotifications) {
+  //     console.log('called');
       
 
-      const unsubscribe = messaging().onMessage(async remoteMessage => {
-        console.log('message arrived', remoteMessage)
-      })
+  //     const unsubscribe = messaging().onMessage(async remoteMessage => {
+  //       console.log('message arrived', remoteMessage)
+  //     })
   
-      messaging().setBackgroundMessageHandler(async remoteMessage => {
-        console.log('message arrived in background', remoteMessage)
-      })
+  //     messaging().setBackgroundMessageHandler(async remoteMessage => {
+  //       console.log('message arrived in background', remoteMessage)
+  //     })
 
-      return unsubscribe;
-    }
-  }, [grantedPushNotifications])
+  //     return unsubscribe;
+  //   }
+  // }, [grantedPushNotifications])
 
   return (
     <AuthProvider>

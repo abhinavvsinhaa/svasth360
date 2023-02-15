@@ -3,11 +3,11 @@ import { Pressable, Text, StyleSheet, View } from "react-native";
 import { styleConstants } from "../../constants/constant";
 import { ZHSearchModal } from "./ZHSearchModal";
 
-export const ZHSearchDashboard = () => {
+export const ZHSearchDashboard = ({ navigation }) => {
     const [visible, setVisible] = useState(false)
     return (
         <View style={{ width: "24%" }}>
-            <ZHSearchModal visible={visible} setVisible={setVisible}/>
+            <ZHSearchModal visible={visible} setVisible={setVisible} navigation={navigation}/>
             <Pressable style={styles.button} onPress={() => setVisible(!visible)}>
                 <Text style={styles.text}>ZH</Text>
             </Pressable>
