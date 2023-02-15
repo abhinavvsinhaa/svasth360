@@ -23,7 +23,8 @@ import storage from '@react-native-firebase/storage';
 import {v4 as uuid} from 'uuid'
 
 export const Chat = ({navigation, route}) => {
-  const {userId} = route.params;
+  const params = JSON.parse(route.params)
+  const {userId} = params;
   const {authData} = useAuth();
   const [messages, setMessages] = useState([]);
   const [messageBody, setMessageBody] = useState('');

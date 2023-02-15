@@ -141,10 +141,10 @@ export const Dashboard = ({navigation, route}) => {
       />
 
       <View style={styles.searchView}>
-        <PHCSearchDashboard />
+        <PHCSearchDashboard navigation={navigation}/>
         <CHSearchDashboard navigation={navigation} />
         <ZHSearchDashboard navigation={navigation} />
-        <MedColSearchDashboard />
+        <MedColSearchDashboard navigation={navigation}/>
       </View>
 
       <ScrollView>

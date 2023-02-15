@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import {Image, Modal, Pressable, StyleSheet, Text, View} from 'react-native';
+import {Alert, Image, Modal, Pressable, StyleSheet, Text, View} from 'react-native';
 import {styleConstants} from '../../constants/constant';
 import SelectDropdown from 'react-native-select-dropdown';
+import axiosInstance from '../../api/axios';
 
 export const PHCSearchModal = ({visible, setVisible, navigation}) => {
   const [apiData, setAPIData] = useState();
@@ -18,12 +19,14 @@ export const PHCSearchModal = ({visible, setVisible, navigation}) => {
   const [doctors, setDoctors] = useState([]);
 
   async function onClickSearch() {
-    navigation.navigate(
-      'Search',
-      JSON.stringify({
-        doctors,
-      }),
-    );
+    // if (doctors.length > 0) {
+      navigation.navigate(
+        'Search',
+        JSON.stringify({
+          doctors,
+        }),
+      );
+    
     setVisible(false);
   }
 
@@ -37,8 +40,8 @@ export const PHCSearchModal = ({visible, setVisible, navigation}) => {
                 let doctors = chc.doctors.map(doctor => {
                   return doctor;
                 });
+                console.log('found doctors', doctors)
                 setDoctors(doctors);
-                return;
               }
             });
             block.phc.map(phc => {
@@ -46,8 +49,8 @@ export const PHCSearchModal = ({visible, setVisible, navigation}) => {
                 let doctors = phc.doctors.map(doctor => {
                   return doctor;
                 });
+                console.log('found doctors', doctors)
                 setDoctors(doctors);
-                return;
               }
             });
             return;
@@ -86,9 +89,11 @@ export const PHCSearchModal = ({visible, setVisible, navigation}) => {
             let chcs = block.chc.map(chc => {
               return chc.name;
             });
-            let phcs = block.phc.map(chc => {
+            console.log(chcs)
+            let phcs = block.phc.map(phc => {
               return phc.name;
             });
+            console.log(phcs)
             let arr = chcs.concat(phcs);
             setCHCPHCs(arr);
             return;
@@ -131,7 +136,7 @@ export const PHCSearchModal = ({visible, setVisible, navigation}) => {
                 style={styles.crossButtonIcon}
               />
             </Pressable>
-            <Text>PHC/CHC</Text>
+            <Text>PHCs and CHCs</Text>
             {districts != [] && (
               <SelectDropdown
                 data={districts}
@@ -189,7 +194,7 @@ export const PHCSearchModal = ({visible, setVisible, navigation}) => {
             {chcphc != [] && (
               <SelectDropdown
                 data={chcphc}
-                defaultButtonText="Choose CH"
+                defaultButtonText="Choose PHC/CHC"
                 buttonTextStyle={{
                   textAlign: 'left',
                   color: styleConstants.BLUE,
@@ -253,4 +258,11 @@ const styles = StyleSheet.create({
   crossButtonIcon: {
     width: 12,
   },
+  button: {
+    backgroundColor: styleConstants.BLUE,
+    width: "100%",
+    marginTop: 10,
+    borderRadius: 5,
+    padding: 10
+  }
 });

@@ -3,11 +3,11 @@ import { Pressable, Text, StyleSheet, View } from "react-native";
 import { styleConstants } from "../../constants/constant";
 import { PHCSearchModal } from "./PHCSearchModal";
 
-export const PHCSearchDashboard = () => {
+export const PHCSearchDashboard = ({ navigation }) => {
     const [visible, setVisible] = useState(false)
     return (
         <View style={{ width: "24%" }}>
-            <PHCSearchModal visible={visible} setVisible={setVisible}/>
+            <PHCSearchModal visible={visible} setVisible={setVisible} navigation={navigation}/>
             <Pressable style={styles.button} onPress={() => setVisible(!visible)}>
                 <Text style={styles.text}>PHC/CHC</Text>
             </Pressable>

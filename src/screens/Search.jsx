@@ -1,12 +1,14 @@
 import React from 'react';
 import {DoctorCard} from '../components';
+import { Text, View } from 'react-native';
+import { styleConstants } from '../constants/constant';
 
 export const Search = ({route}) => {
   const params = JSON.parse(route.params);
   const {doctors} = params;
   return (
     <>
-      {doctors != [] &&
+      {(doctors.length > 0) ?
         doctors.map((doctor, i) => {
           return (
             <DoctorCard
@@ -18,7 +20,12 @@ export const Search = ({route}) => {
               userId={doctor.id}
             />
           );
-        })}
+        })
+        :
+        <View style={{flex: 1, backgroundColor: styleConstants.SAND, justifyContent: 'center', alignItems: 'center'}}>
+          <Text>No results found.</Text>
+        </View>
+      }
     </>
   );
 };
