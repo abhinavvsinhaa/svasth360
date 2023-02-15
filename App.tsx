@@ -5,12 +5,11 @@ import {Navigator} from './src/navigation/Navigator';
 import {AuthProvider} from './src/context/Auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from 'react-native-splash-screen';
-import SocketService from './src/utils/socket';
 import RNCallKeep from 'react-native-callkeep';
 import {Alert, PermissionsAndroid} from 'react-native';
 import {handlePushNotifications} from './src/utils/PushNotifications';
-import messaging from '@react-native-firebase/messaging';
 import {Modal, Text, View, Pressable, StyleSheet} from 'react-native';
+
 function App(): JSX.Element {
   const [grantedPushNotifications, setGrantedPushNotifications] =
     useState<boolean>(false);
@@ -78,89 +77,16 @@ function App(): JSX.Element {
     await AsyncStorage.removeItem('@AuthData');
 
   useEffect(() => {
-    clearAsyncStorage();
+    // clearAsyncStorage();
     setTimeout(() => {
       SplashScreen.hide();
     }, 2000);
 
     // pushNotifications();
-
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log('message arrived', remoteMessage);
-      Alert.alert('INCOMINGG')
-    });
-
-    messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log('message arrived in background', remoteMessage);
-      if (remoteMessage?.data?.type === 'call') {
-        console.log('SHOW MODAL');
-        setModalVisible(true);
-      }
-    });
-
-    return unsubscribe;
-
   }, []);
-
-  // useEffect(() => {
-  //   if (grantedPushNotifications) {
-  //     console.log('called');
-
-  //     const unsubscribe = messaging().onMessage(async remoteMessage => {
-  //       console.log('message arrived', remoteMessage);
-  //     });
-
-  //     messaging().setBackgroundMessageHandler(async remoteMessage => {
-  //       console.log('message arrived in background', remoteMessage);
-  //     });
-
-  //     return unsubscribe;
-  //   }
-  // }, [grantedPushNotifications]);
-
-  const rejectCallNotificationHandler = () => {
-    setModalVisible(false);
-    Alert.alert('You rejected');
-
-    console.log('rejected');
-  };
-  const acceptCallNotificationHandler = () => {
-    setModalVisible(false);
-    Alert.alert('You accepted');
-    console.log('accepted');
-  };
-
-  const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <AuthProvider>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-          setModalVisible(false);
-        }}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>Accept or Reject the action</Text>
-            <Pressable
-              key="1"
-              style={[styles.button, styles.accept]}
-              onPress={acceptCallNotificationHandler}>
-              <Text style={styles.textStyle}>Accept</Text>
-            </Pressable>
-            <Pressable
-              key="2"
-              style={[styles.button, styles.reject]}
-              onPress={rejectCallNotificationHandler}>
-              <Text style={styles.textStyle}>Reject</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
       <PaperProvider>
         <Navigator />
       </PaperProvider>
@@ -169,48 +95,3 @@ function App(): JSX.Element {
 }
 
 export default App;
-
-const styles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 22,
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  button: {
-    marginVertical: 25,
-    borderRadius: 20,
-    padding: 25,
-    elevation: 2,
-  },
-
-  accept: {
-    backgroundColor: 'green',
-  },
-  reject: {backgroundColor: 'red'},
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    fontSize: 18,
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-});

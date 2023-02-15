@@ -51,9 +51,9 @@ export const DoctorCard = ({
         fcmToken
       });
 
-      navigation.navigate('Video Call', {
+      navigation.navigate('Video Call', JSON.stringify({
         channel: uid,
-      });
+      }));
     } catch (error) {
       console.error(error);
     }
