@@ -19,6 +19,7 @@ import {
 } from '../components';
 import {styleConstants} from '../constants/constant';
 import {useAuth} from '../context/Auth';
+import { handlePushNotifications } from '../utils/PushNotifications';
 import SocketService from '../utils/socket';
 
 export const Dashboard = ({navigation, route}) => {
@@ -45,6 +46,8 @@ export const Dashboard = ({navigation, route}) => {
   }
 
   useEffect(() => {
+    handlePushNotifications(authData.id);
+
     SocketService.emit('combine', {
       userId: authData.id
     })
@@ -70,8 +73,8 @@ export const Dashboard = ({navigation, route}) => {
 
       <View style={styles.searchView}>
         <PHCSearchDashboard />
-        <CHSearchDashboard />
-        <ZHSearchDashboard />
+        <CHSearchDashboard navigation={navigation}/>
+        <ZHSearchDashboard navigation={navigation}/>
         <MedColSearchDashboard />
       </View>
 
@@ -90,6 +93,7 @@ export const Dashboard = ({navigation, route}) => {
                 navigation={navigation}
                 route={route}
                 mobileNumber={card.mobileNumber}
+                fcmToken={card.fcmToken}
               />
             );
           })

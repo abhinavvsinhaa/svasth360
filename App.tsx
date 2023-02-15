@@ -87,6 +87,7 @@ function App(): JSX.Element {
 
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       console.log('message arrived', remoteMessage);
+      Alert.alert('INCOMINGG')
     });
 
     messaging().setBackgroundMessageHandler(async remoteMessage => {
@@ -96,6 +97,9 @@ function App(): JSX.Element {
         setModalVisible(true);
       }
     });
+
+    return unsubscribe;
+
   }, []);
 
   // useEffect(() => {

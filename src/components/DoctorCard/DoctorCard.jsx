@@ -20,6 +20,7 @@ export const DoctorCard = ({
   userId,
   navigation,
   mobileNumber,
+  fcmToken
 }) => {
   const [rtcToken, setRTCToken] = useState('');
   const openDialScreen = () => {
@@ -47,6 +48,7 @@ export const DoctorCard = ({
       SocketService.emit('create_room', {
         channel: uid,
         userId,
+        fcmToken
       });
 
       navigation.navigate('Video Call', {
