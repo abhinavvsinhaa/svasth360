@@ -87,14 +87,13 @@ export const DoctorCard = ({
           onPress={() => {
             navigation.navigate(
               'Personal Chat',
-              JSON.stringify(
+              // JSON.stringify(
                 {
                   userId,
                   name,
                   mobileNumber,
                   navigation,
                 },
-              )
             );
           }}>
           <Image source={require('../../assets/images/ChatCardIconDash.png')} />

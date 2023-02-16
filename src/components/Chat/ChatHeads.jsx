@@ -45,7 +45,7 @@ export default ChatHead = ({ navigation }) => {
         const messages = Array(convo.messages)
         if (users.length > 0) {
           let user = users[0].id == authData.id ? users.slice(-1)[1] : Object(users[0][1])
-          console.log(user)
+          console.log(user.id)
           const msgContent = 
             messages[messages.length - 1].type == 0
               ? messages[messages.length - 1].content

@@ -22,9 +22,11 @@ import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import {v4 as uuid} from 'uuid'
 
-export const Chat = ({navigation, route}) => {
-  const params = JSON.parse(route.params)
+export const Chat = ({navigation, route}) => { 
+  // const params = JSON.parse(route.params)
+  const params = route.params;
   const {userId} = params;
+  console.log(params)
   const {authData} = useAuth();
   const [messages, setMessages] = useState([]);
   const [messageBody, setMessageBody] = useState('');
@@ -38,19 +40,42 @@ export const Chat = ({navigation, route}) => {
     setConversationId(response.data.id);
   }
 
-  async function sendMessage(type = 0, content = messageBody) {
-    const payload = {
-      conversationId,
-      type,
-      content,
-      timestamp: new Date(),
-      sender: authData.id,
-      reciever: userId,
-    };
+  async function sendImageMessage(url) {
+    try {
+      const payload = {
+        conversationId,
+        type: 1,
+        content: url,
+        timestamp: new Date(),
+        sender: authData.id,
+        reciever: userId,
+      };
+  
+      const response = await axiosInstance.patch('conversation', payload);
+      SocketService.emit('send_message', payload);
+      setMessages([...messages, payload]);
+    } catch (error) {
+      console.log('error in sending message', error)
+    }
+  }
 
-    SocketService.emit('send_message', payload);
-    const response = await axiosInstance.patch('conversation', payload);
-    setMessages([...messages, payload]);
+  async function sendMessage() {
+    try {
+      const payload = {
+        conversationId,
+        type: 0,
+        content: messageBody,
+        timestamp: new Date(),
+        sender: authData.id,
+        reciever: userId,
+      };
+  
+      const response = await axiosInstance.patch('conversation', payload);
+      SocketService.emit('send_message', payload);
+      setMessages([...messages, payload]);
+    } catch (error) {
+      console.log('error in sending message', error)
+    }
   }
 
   const cameraLaunch = async () => {
@@ -74,7 +99,7 @@ export const Chat = ({navigation, route}) => {
           task.then(async () => {
             console.log('Image uploaded');
             const url = await reference.getDownloadURL()
-            sendMessage(1, url)
+            sendImageMessage(url)
             console.log('download url', url);
           });
         }
