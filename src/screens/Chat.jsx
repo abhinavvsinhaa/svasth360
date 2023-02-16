@@ -30,15 +30,6 @@ export const Chat = ({navigation, route}) => {
   const [messageBody, setMessageBody] = useState('');
   const [conversationId, setConversationId] = useState('');
 
-  AWS.config.update({
-    region: 'ap-south-1',
-    credentials: {
-      accessKeyId: 'AKIAQMEXTK3GWN6G3MQC',
-      secretAccessKey: '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',
-    },
-    signatureVersion: 'v4',
-  });
-
   async function fetchConversation() {
     const response = await axiosInstance.get(
       `conversation?userId1=${userId}&userId2=${authData.id}`,
@@ -106,9 +97,9 @@ export const Chat = ({navigation, route}) => {
   return (
     <SafeAreaView style={styles.container}>
       <ChatHeader
-        name={route.params.name}
+        name={params.name}
         navigation={navigation}
-        mobileNumber={route.params.mobileNumber}
+        mobileNumber={params.mobileNumber}
       />
       <ImageBackground
         source={require('../assets/images/Splash.png')}

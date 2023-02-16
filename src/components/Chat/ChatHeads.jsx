@@ -33,40 +33,43 @@ export default ChatHead = ({ navigation }) => {
   ];
 
   const fetchMyConvos = async () => {
-    const response = await axiosInstance.post('conversation', {
-      userId: authData.id,
-    });
+    try {
+      const response = await axiosInstance.post('conversation', {
+        userId: authData.id,
+      });
+  
+      // console.log(response.data);
+  
+      const convs = response.data.map(convo => {
+        const users = Array(convo.users)
+        const messages = Array(convo.messages)
+        if (users.length > 0) {
+          let user = users[0].id == authData.id ? users.slice(-1)[1] : Object(users[0][1])
+          console.log(user)
+          const msgContent = 
+            messages[messages.length - 1].type == 0
+              ? messages[messages.length - 1].content
+              : 'Attachment';
+          const timestamp = messages[messages.length - 1].timestamp;
+          const dt = new Date(timestamp);
+    
+          return {
+            id: user.id, 
+            name: user.name,
+            mobileNumber: user.mobileNumber,
+            lastMessage: msgContent,
+            availability: user.availability,
+            // timestamp: `${dt.toTimeString()}`,
+          };
+        }
+      })
 
-    console.log(response.data);
+      setConvos(convs);
 
-    const convs = response.data.map(convo => {
-      const user =
-        convo.users[0].id == authData.id ? convo.users[1] : convo.users[0];
-      const msgContent =
-        convo.messages[convo.messages.length - 1].type == 0
-          ? convo.messages[convo.messages.length - 1].content
-          : 'Attachment';
-      const timestamp = convo.messages[convo.messages.length - 1].timestamp;
-      const dt = new Date(timestamp);
+    } catch (error) {
+      console.error('Error here', error) 
+    }
 
-      return {
-        id: user.id,
-        name: user.name,
-        mobileNumber: user.mobileNumber,
-        lastMessage: msgContent,
-        availability: user.availability,
-        // timestamp: `${dt.toTimeString()}`,
-      };
-      //   setConvos([
-      //     ...convos,
-      //     {
-      //       name: username,
-      //       lastMessage: msg,
-      //     },
-      //   ]);
-    });
-
-    setConvos(convs);
   };
 
   useEffect(() => {
@@ -78,9 +81,9 @@ export default ChatHead = ({ navigation }) => {
       <Text style={styles.heading}>Inbox</Text>
       <ScrollView style={{paddingVertical: 10}}>
         {convos != [] &&
-          convos.map(convo => {
+          convos.map((convo, i) => {
             return (
-              <>
+              <View key={i}>
                 <Divider />
                 <View style={styles.listContainer}>
                   <View style={{display: 'flex', flexDirection: 'row'}}>
@@ -90,11 +93,11 @@ export default ChatHead = ({ navigation }) => {
                     />
                     <View style={{marginLeft: 10}}>
                       <Pressable onPress={() => {
-                        navigation.navigate('Personal Chat', {
+                        navigation.navigate('Personal Chat', JSON.stringify({
                             userId: convo.id,
                             name: convo.name,
                             mobileNumber: convo.mobileNumber
-                        })
+                        }))
                       }}>
                         <Text>{convo.name}</Text>
                         <Text>{convo.lastMessage}</Text>
@@ -106,7 +109,7 @@ export default ChatHead = ({ navigation }) => {
                     <Text>{convo.timestamp}</Text>
                   </View>
                 </View>
-              </>
+              </View>
             );
           })}
       </ScrollView>
