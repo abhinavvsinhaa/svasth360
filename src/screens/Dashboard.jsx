@@ -10,6 +10,7 @@ import {
   Modal,
   Text,
   Pressable,
+  Image,
 } from 'react-native';
 import axiosInstance from '../api/axios';
 import {
@@ -29,7 +30,8 @@ import messaging from '@react-native-firebase/messaging';
 export const Dashboard = ({navigation, route}) => {
   const {authData} = useAuth();
   const [cards, setCards] = useState([]);
-
+  const [channelForVideo, setChannelForVideo] = useState(null);
+  const [modalVisible, setModalVisible] = useState(true);
   const rejectCallNotificationHandler = () => {
     setModalVisible(false);
     Alert.alert('You rejected');
@@ -39,10 +41,15 @@ export const Dashboard = ({navigation, route}) => {
   const acceptCallNotificationHandler = () => {
     setModalVisible(false);
     Alert.alert('You accepted');
-    console.log('accepted');
-  };
+    navigation.navigate(
+      'Video Call',
+      JSON.stringify({
+        channel: channelForVideo,
+      }),
+    );
 
-  const [modalVisible, setModalVisible] = useState(false);
+    // console.log('accepted');
+  };
 
   async function fetchMyCards() {
     try {
@@ -87,20 +94,26 @@ export const Dashboard = ({navigation, route}) => {
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('message arrived in background', remoteMessage);
       if (remoteMessage?.data?.type === 'call') {
+        setChannelForVideo(prev => remoteMessage.data.channel);
         console.log('SHOW MODAL');
         // setModalVisible(true);
       }
     });
 
     messaging().onNotificationOpenedApp(remoteMessage => {
-      console.log('opened app')
+      console.log('opened app');
       if (remoteMessage.data.type == 'call') {
-        console.log('matched')
-        navigation.navigate('Video Call', JSON.stringify({
-          channel: remoteMessage.data.channel
-        }))
+        console.log('matched');
+        // navigation.navigate(
+        //   'Video Call',
+        //   JSON.stringify({
+        //     channel: remoteMessage.data.channel,
+        //   }),
+        // );
+        setChannelForVideo(prev => remoteMessage.data.channel);
+        setModalVisible(prev => true);
       }
-    })
+    });
 
     return unsubscribe;
   }, []);
@@ -110,26 +123,28 @@ export const Dashboard = ({navigation, route}) => {
       <Modal
         animationType="slide"
         transparent={true}
-        visible={modalVisible}
+        visible={true}
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-          setModalVisible(false);
+          // Alert.alert('Modal has been closed.');
+          // setModalVisible(!modalVisible);
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Accept or Reject the action</Text>
-            <Pressable
-              key="1"
-              style={[styles.button, styles.accept]}
-              onPress={acceptCallNotificationHandler}>
-              <Text style={styles.textStyle}>Accept</Text>
-            </Pressable>
-            <Pressable
-              key="2"
-              style={[styles.button, styles.reject]}
-              onPress={rejectCallNotificationHandler}>
-              <Text style={styles.textStyle}>Reject</Text>
-            </Pressable>
+            <Text style={styles.modalText}>Call</Text>
+            <View style={styles.btnContainer}>
+              <Pressable
+                key="1"
+                style={[styles.button, styles.accept]}
+                onPress={acceptCallNotificationHandler}>
+                <Text style={styles.textStyle}>Accept</Text>
+              </Pressable>
+              <Pressable
+                key="2"
+                style={[styles.button, styles.reject]}
+                onPress={rejectCallNotificationHandler}>
+                <Text style={styles.textStyle}>Reject</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </Modal>
@@ -141,17 +156,17 @@ export const Dashboard = ({navigation, route}) => {
       />
 
       <View style={styles.searchView}>
-        <PHCSearchDashboard navigation={navigation}/>
+        <PHCSearchDashboard navigation={navigation} />
         <CHSearchDashboard navigation={navigation} />
         <ZHSearchDashboard navigation={navigation} />
-        <MedColSearchDashboard navigation={navigation}/>
+        <MedColSearchDashboard navigation={navigation} />
       </View>
 
       <ScrollView>
         {cards == [] ? (
           <ActivityIndicator size={'small'} />
         ) : (
-          cards.map(card => {
+          cards?.map(card => {
             return (
               <DoctorCard
                 name={card.name}
@@ -195,6 +210,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 35,
+    paddingVertical: 50,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -203,19 +219,24 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5,
+    elevation: 10,
   },
   button: {
-    marginVertical: 25,
+    marginTop: 25,
     borderRadius: 20,
-    padding: 25,
+    paddingHorizontal: 25,
+    paddingVertical: 15,
     elevation: 2,
+  },
+  btnContainer: {
+    flexDirection: 'row',
+    gap: 25,
   },
   accept: {
     backgroundColor: 'green',
   },
   reject: {
-    backgroundColor: 'red'
+    backgroundColor: 'orangered',
   },
   textStyle: {
     color: 'white',
@@ -224,7 +245,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   modalText: {
+    width: 200,
+    color: 'white',
+    paddingVertical: 15,
+    borderRadius: 15,
+    backgroundColor: styleConstants.BLUE,
     marginBottom: 15,
     textAlign: 'center',
+    fontSize: 25,
+    fontWeight: 'bold',
+    // color: styleConstants.BLUE,
   },
 });
