@@ -123,7 +123,7 @@ export const Dashboard = ({navigation, route}) => {
       <Modal
         animationType="slide"
         transparent={true}
-        visible={true}
+        visible={modalVisible}
         onRequestClose={() => {
           // Alert.alert('Modal has been closed.');
           // setModalVisible(!modalVisible);
