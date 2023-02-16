@@ -8,6 +8,7 @@ import {
   TextInput,
   Pressable,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import axiosInstance from '../api/axios';
 import {styleConstants} from '../constants/constant';
@@ -16,6 +17,7 @@ import {useAuth} from '../context/Auth';
 export const SignUp = ({navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const {signIn, zimLogIn} = useAuth();
+  const [loading, setLoading] = useState(false);
 
   async function checkIfUserExists() {
     try {
@@ -28,8 +30,8 @@ export const SignUp = ({navigation}) => {
         await signIn(res.data);
         await zimLogIn({
           userID: res.data.id,
-          userName: res.data.name
-        })
+          userName: res.data.name,
+        });
         navigation.navigate('Tab Navigator');
       } else {
         navigation.navigate('Enter OTP', {phoneNumber: `+91${phoneNumber}`});
@@ -41,6 +43,7 @@ export const SignUp = ({navigation}) => {
 
   function handleGetOTP(event) {
     event.preventDefault();
+    setLoading(true);
     if (
       phoneNumber == '' ||
       phoneNumber.length != 10 ||
@@ -65,19 +68,30 @@ export const SignUp = ({navigation}) => {
         style={styles.backgroundImage}>
         <Image source={require('../assets/images/Logo.png')} />
         <Image source={require('../assets/images/SignupMob.png')} />
-        <Text style={styles.otpVerificationHeader}>Mobile Number</Text>
-        <Text style={styles.otpVerificationDescription}>
-          Please type your mobile number in the text field below.
-        </Text>
-        <TextInput
-          placeholder="Enter your mobile number"
-          style={styles.mobileNumberInput}
-          value={phoneNumber}
-          onChangeText={text => setPhoneNumber(text)}
-        />
-        <Pressable style={styles.getOTPButton} onPress={handleGetOTP}>
-          <Text style={styles.OTPButtonText}>Next</Text>
-        </Pressable>
+        {loading == false ? (
+          <>
+            <Text style={styles.otpVerificationHeader}>Mobile Number</Text>
+            <Text style={styles.otpVerificationDescription}>
+              Please type your mobile number in the text field below.
+            </Text>
+            <TextInput
+              placeholder="Enter your mobile number"
+              style={styles.mobileNumberInput}
+              value={phoneNumber}
+              onChangeText={text => setPhoneNumber(text)}
+              inputMode="numeric"
+              keyboardType="numeric"
+            />
+            <Pressable
+              style={styles.getOTPButton}
+              onPress={handleGetOTP}
+            >
+              <Text style={styles.OTPButtonText}>Next</Text>
+            </Pressable>
+          </>
+        ) : (
+          <ActivityIndicator style={{ marginTop: 10 }}/>
+        )}
       </ImageBackground>
     </SafeAreaView>
   );

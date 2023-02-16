@@ -42,8 +42,8 @@ export async function getFCMToken(userId) {
 }
 
 export async function handlePushNotifications(userId) {
-  const enabled = await requestUserPermission();
-  if (enabled) await getFCMToken(userId)
-  return enabled;
+  // const enabled = await requestUserPermission();
+  await getFCMToken(userId)
+  return true;
 }
 

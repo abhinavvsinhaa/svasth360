@@ -33,14 +33,6 @@ export const DoctorCard = ({
     }
   };
 
-  const createRoom = () => {
-    const uid = uuidv4();
-    SocketService.emit('create_room', {
-      roomId: uid,
-      userId,
-    });
-  };
-
   const fetchAgoraToken = async () => {
     try {
       const uid = uuidv4();
