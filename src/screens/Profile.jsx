@@ -40,7 +40,10 @@ export const Profile = () => {
         registrationCouncil,
         registrationYear,
       });
-      if (res.data) Alert.alert('User updated successfully');
+      if (res.data) {
+        Alert.alert('User updated successfully');
+        await AsyncStorage.setItem('@AuthData', JSON.stringify(res.data))
+      }
     } catch (error) {
       console.error(error);
     }
