@@ -16,8 +16,8 @@ let _Environments = {
 }
 
 function getEnvironment() {
-    return _Environments.development
+    return _Environments.production
 }
 
 let env = getEnvironment()
-export default env
+export default env;

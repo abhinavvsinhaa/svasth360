@@ -41,16 +41,16 @@ export default ChatHead = ({ navigation }) => {
       // console.log(response.data);
   
       const convs = response.data.map(convo => {
-        const users = Array(convo.users)
-        const messages = Array(convo.messages)
-        if (users.length > 0) {
-          let user = users[0].id == authData.id ? users.slice(-1)[1] : Object(users[0][1])
-          console.log(user.id)
+        // const users = Array(convo.users)
+        // const messages = Array(convo.messages)
+        // if (users.length > 0) {
+          let user = convo.users[0].id == authData.id ? convo.users[1] : convo.users[0]
+          // console.log(user.id)
           const msgContent = 
-            messages[messages.length - 1].type == 0
-              ? messages[messages.length - 1].content
+            convo.messages[convo.messages.length - 1].type == 0
+              ? convo.messages[convo.messages.length - 1].content
               : 'Attachment';
-          const timestamp = messages[messages.length - 1].timestamp;
+          const timestamp = convo.messages[convo.messages.length - 1].timestamp;
           const dt = new Date(timestamp);
     
           return {
@@ -61,7 +61,7 @@ export default ChatHead = ({ navigation }) => {
             availability: user.availability,
             // timestamp: `${dt.toTimeString()}`,
           };
-        }
+        // }
       })
 
       setConvos(convs);
@@ -93,11 +93,11 @@ export default ChatHead = ({ navigation }) => {
                     />
                     <View style={{marginLeft: 10}}>
                       <Pressable onPress={() => {
-                        navigation.navigate('Personal Chat', JSON.stringify({
+                        navigation.navigate('Personal Chat', {
                             userId: convo.id,
                             name: convo.name,
                             mobileNumber: convo.mobileNumber
-                        }))
+                        })
                       }}>
                         <Text>{convo.name}</Text>
                         <Text>{convo.lastMessage}</Text>
