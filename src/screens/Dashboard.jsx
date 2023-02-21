@@ -180,6 +180,7 @@ export const Dashboard = ({navigation, route}) => {
                 route={route}
                 mobileNumber={card.mobileNumber}
                 fcmToken={card.fcmToken}
+                availability={card.availability}
               />
             );
           })

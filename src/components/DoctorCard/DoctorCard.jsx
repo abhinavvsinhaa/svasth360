@@ -20,7 +20,8 @@ export const DoctorCard = ({
   userId,
   navigation,
   mobileNumber,
-  fcmToken
+  fcmToken,
+  availability
 }) => {
   const [rtcToken, setRTCToken] = useState('');
   const openDialScreen = () => {
@@ -64,7 +65,13 @@ export const DoctorCard = ({
             <Text style={{color: styleConstants.BLUE}}>{HF}</Text>
           </View>
         </View>
-        <Text>Offline</Text>
+        {
+          availability == 'offline' 
+          ?
+          <Image source={require('../../assets/images/red-icon.png')} style={{ width: 30, height: 30 }}/>
+          :
+          <Image source={require('../../assets/images/green-icon.png')} style={{ width: 30, height: 30 }}/>
+        }
       </View>
       <View style={styles.actionButtonsContainer}>
         <Pressable onPress={openDialScreen}>
