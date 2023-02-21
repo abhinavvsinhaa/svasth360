@@ -26,12 +26,14 @@ import {useAuth} from '../context/Auth';
 import {handlePushNotifications} from '../utils/PushNotifications';
 import SocketService from '../utils/socket';
 import messaging from '@react-native-firebase/messaging';
+import { SearchBar } from '../components/SearchBar/SearchBar';
 
 export const Dashboard = ({navigation, route}) => {
   const {authData} = useAuth();
   const [cards, setCards] = useState([]);
   const [channelForVideo, setChannelForVideo] = useState(null);
-  const [modalVisible, setModalVisible] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+
   const rejectCallNotificationHandler = () => {
     setModalVisible(false);
     Alert.alert('You rejected');
@@ -183,6 +185,7 @@ export const Dashboard = ({navigation, route}) => {
           })
         )}
       </ScrollView>
+      <SearchBar navigation={navigation}/>
     </SafeAreaView>
   );
 };
