@@ -75,7 +75,7 @@ export const FillSignUpDetails = ({navigation, route}) => {
     try {
       setShowAvailableHealthcareFacility([]);
       if (designation != 'MO') {
-        Alert.alert('called');
+        // Alert.alert('called');
         const hf = matchDesignationWithHF.get(designation);
         const stateId = '63d745c21dfbee793b8a05ad';
         // const districtId = await districtMap.get(district);
@@ -87,7 +87,7 @@ export const FillSignUpDetails = ({navigation, route}) => {
         // Alert.alert(districtId);
         // Alert.alert(blockId);
         console.log(blockId)
-        Alert.alert(hf);
+        // Alert.alert(hf);
         const res = await axiosInstance.get(
           `${hf}?stateId=${stateId}&districtId=${districtId}&blockId=${blockId}`,
         );
@@ -183,8 +183,9 @@ export const FillSignUpDetails = ({navigation, route}) => {
         userName: String(res.data.id),
       });
     } catch (error) {
+      console.error('error while registering', error)
       // Alert.alert('User already registered with mobile number');
-      Alert.alert(error);
+      // Alert.alert(error);
     }
   };
 

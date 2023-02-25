@@ -14,6 +14,8 @@ import axiosInstance from '../api/axios';
 import {styleConstants} from '../constants/constant';
 import {useAuth} from '../context/Auth';
 
+const samplePhoneNumber = '1234567899';
+
 export const SignUp = ({navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const {signIn, zimLogIn} = useAuth();
@@ -41,9 +43,8 @@ export const SignUp = ({navigation}) => {
     }
   }
 
-  function handleGetOTP(event) {
+  async function handleGetOTP(event) {
     event.preventDefault();
-    setLoading(true);
     if (
       phoneNumber == '' ||
       phoneNumber.length != 10 ||
@@ -57,7 +58,23 @@ export const SignUp = ({navigation}) => {
     }
 
     // handle flow
-    checkIfUserExists();
+    setLoading(true);
+    if (phoneNumber != samplePhoneNumber) {
+      checkIfUserExists();
+    } else {
+      // delete dummy user and then navigate
+      const res = await axiosInstance.delete('doctor')
+      console.log(res.data)
+      if (res.data == 'deleted') {
+        navigation.navigate('Sign Up', {
+          mobileNumber: phoneNumber,
+          user: JSON.stringify({
+            phoneNumber,
+          }),
+        });
+      }
+
+    }
   }
 
   return (
@@ -82,15 +99,12 @@ export const SignUp = ({navigation}) => {
               inputMode="numeric"
               keyboardType="numeric"
             />
-            <Pressable
-              style={styles.getOTPButton}
-              onPress={handleGetOTP}
-            >
+            <Pressable style={styles.getOTPButton} onPress={handleGetOTP}>
               <Text style={styles.OTPButtonText}>Next</Text>
             </Pressable>
           </>
         ) : (
-          <ActivityIndicator style={{ marginTop: 10 }}/>
+          <ActivityIndicator style={{marginTop: 10}} />
         )}
       </ImageBackground>
     </SafeAreaView>

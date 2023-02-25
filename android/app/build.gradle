@@ -98,8 +98,8 @@ android {
         applicationId "com.abhinavsinha.svasth360has"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "1.0.0"
+        versionCode 8
+        versionName "1.0.5"
     }
 
     splits {
