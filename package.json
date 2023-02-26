@@ -1,6 +1,6 @@
 {
   "name": "svasth360has",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -11,6 +11,7 @@
     "bundle": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
     "pod": "cd ios && pod install",
     "assemble-debug": "cd android && ./gradlew assembleDebug",
+    "bundle-release": "yarn version && cd android && ./gradlew bundleRelease",
     "android-emulator": "/Users/abhinav/Library/Android/sdk/emulator/emulator -avd Pixel_6_API_33",
     "version": "react-native-version --never-amend"
   },
