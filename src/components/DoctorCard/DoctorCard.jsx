@@ -38,15 +38,16 @@ export const DoctorCard = ({
     try {
       const uid = uuidv4();
       console.log('roomId', uid);
+      
+      navigation.navigate('Video Call', {
+        channel: uid,
+      });
+
       SocketService.emit('create_room', {
         channel: uid,
         userId,
         fcmToken
       });
-
-      navigation.navigate('Video Call', JSON.stringify({
-        channel: uid,
-      }));
     } catch (error) {
       console.error(error);
     }

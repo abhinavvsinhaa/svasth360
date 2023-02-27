@@ -45,9 +45,9 @@ export const Dashboard = ({navigation, route}) => {
     Alert.alert('You accepted');
     navigation.navigate(
       'Video Call',
-      JSON.stringify({
+      {
         channel: channelForVideo,
-      }),
+      },
     );
 
     // console.log('accepted');
@@ -91,12 +91,15 @@ export const Dashboard = ({navigation, route}) => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       console.log('message arrived', remoteMessage);
       Alert.alert('INCOMINGG');
+      navigation.navigate('Video Call', {
+        channel: data.channel,
+      });
     });
 
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('message arrived in background', remoteMessage);
       if (remoteMessage?.data?.type === 'call') {
-        setChannelForVideo(prev => remoteMessage.data.channel);
+        setChannelForVideo(remoteMessage.data.channel);
         console.log('SHOW MODAL');
         // setModalVisible(true);
       }
@@ -112,8 +115,11 @@ export const Dashboard = ({navigation, route}) => {
         //     channel: remoteMessage.data.channel,
         //   }),
         // );
-        setChannelForVideo(prev => remoteMessage.data.channel);
-        setModalVisible(prev => true);
+        navigation.navigate('Video Call', {
+          channel: remoteMessage.data.channel,
+        });
+        setChannelForVideo(remoteMessage.data.channel);
+        // setModalVisible(true);
       }
     });
 

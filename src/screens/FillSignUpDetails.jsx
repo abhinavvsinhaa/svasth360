@@ -10,7 +10,7 @@ import {
   Alert,
   SafeAreaView,
 } from 'react-native';
-import { log } from 'react-native-reanimated';
+import {log} from 'react-native-reanimated';
 import SelectDropdown from 'react-native-select-dropdown';
 import axiosInstance from '../api/axios';
 import {styleConstants} from '../constants/constant';
@@ -25,6 +25,7 @@ export const FillSignUpDetails = ({navigation, route}) => {
   const [block, setBlock] = useState(null);
   const [healthcareFacilityType, setHealthcareFacilityType] = useState('');
   const [healthcareFacilityName, setHealthcareFacilityName] = useState('');
+  // const [mobileNumber, setMobileNumber] = useState('');
 
   let matchDesignationWithHF = new Map();
   matchDesignationWithHF.set('CMO', 'zh');
@@ -54,21 +55,21 @@ export const FillSignUpDetails = ({navigation, route}) => {
     setBlocksName([]);
     setBlockMap(new Map());
 
-    const dst = apiData.districts.filter((district) => {
-      return district.name == 'Kangra'
-    })
-    
+    const dst = apiData.districts.filter(district => {
+      return district.name == 'Kangra';
+    });
+
     // console.log(dst)
     const blockMap = new Map();
     const __block = dst[0].blocks.map(__block => {
-      blockMap.set(String(__block.name), String(__block._id))
-      console.log(__block.name, __block._id)
-      return __block.name
-    })
+      blockMap.set(String(__block.name), String(__block._id));
+      console.log(__block.name, __block._id);
+      return __block.name;
+    });
 
     // console.log(__block)
-    setBlocksName(__block)
-    setBlockMap(new Map(blockMap))
+    setBlocksName(__block);
+    setBlockMap(new Map(blockMap));
   };
 
   const fetchHF = async () => {
@@ -79,24 +80,24 @@ export const FillSignUpDetails = ({navigation, route}) => {
         const hf = matchDesignationWithHF.get(designation);
         const stateId = '63d745c21dfbee793b8a05ad';
         // const districtId = await districtMap.get(district);
-        const districtId = '63d745c61dfbee793b8a05b0'
-        console.log(block)
-        const blockId = (block != null) ? blockMap.get(block) : '';
-        console.log(blockId)
+        const districtId = '63d745c61dfbee793b8a05b0';
+        console.log(block);
+        const blockId = block != null ? blockMap.get(block) : '';
+        console.log(blockId);
         // const blockId = '63d745ca1dfbee793b8a05b5'
         // Alert.alert(districtId);
         // Alert.alert(blockId);
-        console.log(blockId)
+        console.log(blockId);
         // Alert.alert(hf);
         const res = await axiosInstance.get(
           `${hf}?stateId=${stateId}&districtId=${districtId}&blockId=${blockId}`,
         );
         console.log('Available HFs', res.data);
         const hfs = res.data.map(__hf => {
-          return __hf.name
+          return __hf.name;
         });
 
-        setShowAvailableHealthcareFacility(hfs)
+        setShowAvailableHealthcareFacility(hfs);
       }
     } catch (error) {
       console.error(error);
@@ -130,14 +131,14 @@ export const FillSignUpDetails = ({navigation, route}) => {
   useEffect(() => {
     if (district != '' && designation != 'CMO' && designation != 'MS')
       findBlockOfDistrict(district);
-    else if (designation == 'CMO' || designation == 'MS' && district != '') {
-      setBlock(null)
-    };
+    else if (designation == 'CMO' || (designation == 'MS' && district != '')) {
+      setBlock(null);
+    }
   }, [district, designation]);
 
   useEffect(() => {
     fetchHF();
-  }, [designation, block])
+  }, [designation, block]);
 
   const handleRegisterButton = async () => {
     try {
@@ -183,7 +184,7 @@ export const FillSignUpDetails = ({navigation, route}) => {
         userName: String(res.data.id),
       });
     } catch (error) {
-      console.error('error while registering', error)
+      console.error('error while registering', error);
       // Alert.alert('User already registered with mobile number');
       // Alert.alert(error);
     }
@@ -296,7 +297,6 @@ export const FillSignUpDetails = ({navigation, route}) => {
               textAlign: 'left',
             }}
             onSelect={(selectedItem, index) => {
-
               setDistrict('Kangra');
               // if (designation == 'CMO' || designation == 'MS') {
               //   await fetchHF();
