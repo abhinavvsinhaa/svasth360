@@ -10,6 +10,8 @@ import {
   TextInput,
   Image,
   Linking,
+  Modal,
+  ActivityIndicator,
 } from 'react-native';
 import axiosInstance from '../api/axios';
 import {Chat as ChatP} from '../components/Chat/Chat';
@@ -21,6 +23,7 @@ import SocketService from '../utils/socket';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import {v4 as uuid} from 'uuid'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export const Chat = ({navigation, route}) => { 
   // const params = JSON.parse(route.params)
@@ -31,6 +34,7 @@ export const Chat = ({navigation, route}) => {
   const [messages, setMessages] = useState([]);
   const [messageBody, setMessageBody] = useState('');
   const [conversationId, setConversationId] = useState('');
+  const [imageUploading, setImageUploading] = useState(false)
 
   async function fetchConversation() {
     const response = await axiosInstance.get(
@@ -113,9 +117,7 @@ export const Chat = ({navigation, route}) => {
 
     SocketService.on('recieve_message', data => {
       console.log('recieve', data);
-      const msgs = messages;
-      msgs.push(data);
-      setMessages(msgs);
+      setMessages([...messages, data]);
     });
   }, []);
 
@@ -125,53 +127,57 @@ export const Chat = ({navigation, route}) => {
         name={params.name}
         navigation={navigation}
         mobileNumber={params.mobileNumber}
+        fcmToken={params.fcmToken}
+        userId={userId}
       />
       <ImageBackground
         source={require('../assets/images/Splash.png')}
         style={{flex: 1}}>
         {/* <ChatP userId={route.params.userId}/> */}
-        <ScrollView style={styles.container}>
-          {messages != [] &&
-            messages.map((msg, i) => {
-              if (msg.sender == authData.id) {
-                return (
-                  <View style={styles.sendOuterContainer} key={i}>
-                    {
-                      msg.type == 0 &&
-                      <Text style={styles.sendContainer}>{msg.content}</Text>
-                    }
-                    {
-                      msg.type == 1 &&
-                      <Pressable style={styles.sendContainer} onPress={() => { 
-                        Linking.openURL(msg.content)
-                       }}>
-                        <Image source={require('../assets/images/imageIcon.png')} style={{ height: 50, width: 50 }}/>
-                        <Text style={{ color: '#fff', marginLeft: 5 }}>View Image</Text>
-                      </Pressable>
-                    }
-                  </View>
-                );
-              } else {
-                return (
-                  <View style={styles.recieveOuterContainer} key={i}>
-                    {
-                      msg.type == 0 &&
-                      <Text style={styles.recieveContainer}>{msg.content}</Text>
-                    }
-                    {
-                      msg.type == 1 &&
-                      <Pressable style={styles.recieveContainer} onPress={() => { 
-                        Linking.openURL(msg.content)
-                       }}>
-                        <Image source={require('../assets/images/imageIcon.png')} style={{ height: 50, width: 50 }}/>
-                        <Text style={{ color: `${styleConstants.BLUE}`, marginLeft: 5 }}>View Image</Text>
-                      </Pressable>
-                    }
-                  </View>
-                );
-              }
-            })}
-        </ScrollView>
+        <KeyboardAwareScrollView style={styles.scrollContainer}> 
+          {/* <ScrollView style={styles.container}> */}
+            {messages != [] &&
+              messages.map((msg, i) => {
+                if (msg.sender == authData.id) {
+                  return (
+                    <View style={styles.sendOuterContainer} key={i}>
+                      {
+                        msg.type == 0 &&
+                        <Text style={styles.sendContainer}>{msg.content}</Text>
+                      }
+                      {
+                        msg.type == 1 &&
+                        <Pressable style={styles.sendContainer} onPress={() => { 
+                          Linking.openURL(msg.content)
+                        }}>
+                          <Image source={require('../assets/images/imageIcon.png')} style={{ height: 50, width: 50 }}/>
+                          <Text style={{ color: '#fff', marginLeft: 5 }}>View Image</Text>
+                        </Pressable>
+                      }
+                    </View>
+                  );
+                } else {
+                  return (
+                    <View style={styles.recieveOuterContainer} key={i}>
+                      {
+                        msg.type == 0 &&
+                        <Text style={styles.recieveContainer}>{msg.content}</Text>
+                      }
+                      {
+                        msg.type == 1 &&
+                        <Pressable style={styles.recieveContainer} onPress={() => { 
+                          Linking.openURL(msg.content)
+                        }}>
+                          <Image source={require('../assets/images/imageIcon.png')} style={{ height: 50, width: 50 }}/>
+                          <Text style={{ color: `${styleConstants.BLUE}`, marginLeft: 5 }}>View Image</Text>
+                        </Pressable>
+                      }
+                    </View>
+                  );
+                }
+              })}
+          {/* </ScrollView> */}
+        </KeyboardAwareScrollView>
         <View style={styles.container2}>
           <TextInput
             placeholder={'Type message'}
@@ -209,8 +215,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  container: {
-    flex: 1,
+  scrollContainer: {
+    // flex: 1,
+    marginBottom: 80
   },
   sendOuterContainer: {
     maxWidth: '50%',

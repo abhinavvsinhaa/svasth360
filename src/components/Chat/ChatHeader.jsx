@@ -1,8 +1,10 @@
 import React, {useState} from 'react';
 import {StyleSheet, View, Image, Text, Pressable, Platform, Linking} from 'react-native';
 import {styleConstants} from '../../constants/constant';
+import {v4 as uuidv4} from 'uuid'
+import SocketService from '../../utils/socket';
 
-export const ChatHeader = ({name, navigation, mobileNumber}) => {
+export const ChatHeader = ({name, navigation, mobileNumber, userId, fcmToken}) => {
   // const [name, setName] = useState('Dr. Raj Kumar');
   const openDialScreen = () => {
     if (Platform.OS == 'android') {
@@ -11,6 +13,25 @@ export const ChatHeader = ({name, navigation, mobileNumber}) => {
     } else if (Platform.OS == 'ios') {
       const phone = `telprompt:${mobileNumber}`;
       Linking.openURL(phone);
+    }
+  };
+
+  const fetchAgoraToken = async () => {
+    try {
+      const uid = uuidv4();
+      console.log('roomId', uid);
+      
+      navigation.navigate('Video Call', {
+        channel: uid,
+      });
+
+      SocketService.emit('create_room', {
+        channel: uid,
+        userId,
+        fcmToken
+      });
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -24,7 +45,7 @@ export const ChatHeader = ({name, navigation, mobileNumber}) => {
         <Text style={styles.profileName}>{name}</Text>
       </View>
       <View style={styles.iconOuterContainer}>
-        <Pressable onPress={() => navigation.navigate('Video Call')}>
+        <Pressable onPress={fetchAgoraToken}>
           <View style={styles.iconContainer}>
             <Image
               source={require('../../assets/images/ChatVideoCallIcon.png')}

@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     },
     text: {
         textAlign: "center",
-        fontFamily: "Poppins-SemiBold"
+        fontFamily: "Poppins-SemiBold",
+        color: styleConstants.BLUE
     }
 })

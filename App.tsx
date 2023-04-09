@@ -12,7 +12,7 @@ function App(): JSX.Element {
     await AsyncStorage.removeItem('@AuthData');
 
   useEffect(() => {
-    clearAsyncStorage();
+    // clearAsyncStorage();
     setTimeout(() => {
       SplashScreen.hide();
     }, 2000);

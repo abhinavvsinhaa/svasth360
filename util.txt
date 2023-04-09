@@ -1,9 +1,3 @@
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/platform-tools
-
-The app has been working perfectly fine for almost all the devices. Where you enter an Indian mobile number of 10 digits, for example: 9839926621, and then you will receive an OTP of 6 digits, which you have to enter in the next screen, and then further registration step follows.
-
-Have downloaded and tested the app across multiple devices after release, and on different android emulators during development. But still there are some phones, on which the app is not working and is stucked on the loader screen. 
-
-The app has been developed using react-native version 0.71.0, and react version 18.2.0. Can you please suggest some probable issues, which can cause such type of problem. Or even suggest some solution to it.

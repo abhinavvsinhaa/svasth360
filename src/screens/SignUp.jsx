@@ -18,7 +18,7 @@ const samplePhoneNumber = '1234567899';
 
 export const SignUp = ({navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState('');
-  const {signIn, zimLogIn} = useAuth();
+  const {signIn} = useAuth();
   const [loading, setLoading] = useState(false);
 
   async function checkIfUserExists() {
@@ -30,10 +30,6 @@ export const SignUp = ({navigation}) => {
       // no need to enter otp if user is already registered
       if (res.data) {
         await signIn(res.data);
-        await zimLogIn({
-          userID: res.data.id,
-          userName: res.data.name,
-        });
         navigation.navigate('Tab Navigator');
       } else {
         navigation.navigate('Enter OTP', {phoneNumber: `+91${phoneNumber}`});

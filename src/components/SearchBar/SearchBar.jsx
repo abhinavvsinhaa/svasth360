@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#fff',
     borderRadius: 10,
-    padding: 5,
+    padding: 8,
   },
   searchInput: {
     backgroundColor: '#fff',
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   searchButton: {
     backgroundColor: styleConstants.BLUE,
     width: '24.5%',
-    margin: 3,
+    padding: 8,
     borderRadius: 10,
     display: 'flex',
     justifyContent: 'center',

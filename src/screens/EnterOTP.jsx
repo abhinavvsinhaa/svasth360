@@ -22,7 +22,7 @@ export const EnterOTP = ({navigation, route}) => {
   const [otpGenerated, setOTPGenerated] = useState('');
   const [incorrectOTP, setIncorrectOTP] = useState(false);
   const [otp, setOTP] = useState('');
-  const {signIn, loading, zimLogIn} = useAuth();
+  const {signIn, loading} = useAuth();
 
   async function generateOTP() {
     const generateNewOTP = String(Math.floor(100000 + Math.random() * 900000));

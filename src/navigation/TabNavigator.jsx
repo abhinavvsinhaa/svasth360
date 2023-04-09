@@ -2,8 +2,15 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Image} from 'react-native';
 import {styleConstants} from '../constants/constant';
-import { Profile, Appointment, Notifications, Dashboard, FillSignUpDetails, Chat } from "../screens"
-import { ZegoChat } from '../components/Chat/Chat';
+import {
+  Profile,
+  Appointment,
+  Notifications,
+  Dashboard,
+  FillSignUpDetails,
+  Chat,
+} from '../screens';
+import {ZegoChat} from '../components/Chat/Chat';
 import ChatHeads from '../components/Chat/ChatHeads';
 
 const Tab = createBottomTabNavigator();
@@ -14,18 +21,29 @@ export const TabNavigator = () => {
       initialRouteName="Dashboard"
       screenOptions={{
         headerShown: false,
-        tabBarStyle: {backgroundColor: styleConstants.BLUE, paddingVertical: 12},
+        tabBarStyle: {
+          backgroundColor: styleConstants.BLUE,
+          paddingVertical: 12,
+        },
         tabBarShowLabel: false,
       }}>
-        <Tab.Screen
+      <Tab.Screen
         name="Profile"
         component={Profile}
         options={{
           tabBarIcon: ({focused, color, size}) => {
             return (
-              <Image
-                source={require('../assets/images/ProfileTabIcon.png')}
-              />
+              <>
+                {focused ? (
+                  <Image
+                    source={require('../assets/images/profile-active.png')}
+                  />
+                ) : (
+                  <Image
+                    source={require('../assets/images/ProfileTabIcon.png')}
+                  />
+                )}
+              </>
             );
           },
         }}
@@ -49,7 +67,15 @@ export const TabNavigator = () => {
         options={{
           tabBarIcon: ({focused, color, size}) => {
             return (
-              <Image source={require('../assets/images/HomeTabIcon.png')} />
+              <>
+                {focused ? (
+                  <Image source={require('../assets/images/HomeTabIcon.png')} />
+                ) : (
+                  <Image
+                    source={require('../assets/images/dashboard-inactive.png')}
+                  />
+                )}
+              </>
             );
           },
         }}
@@ -71,7 +97,15 @@ export const TabNavigator = () => {
         options={{
           tabBarIcon: ({focused, color, size}) => {
             return (
-              <Image source={require('../assets/images/ChatTabIcon.png')} />
+              <>
+                {focused ? (
+                  <Image
+                    source={require('../assets/images/inbox-active.png')}
+                  />
+                ) : (
+                  <Image source={require('../assets/images/ChatTabIcon.png')} />
+                )}
+              </>
             );
           },
         }}

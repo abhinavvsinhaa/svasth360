@@ -34,7 +34,7 @@ export const FillSignUpDetails = ({navigation, route}) => {
   matchDesignationWithHF.set('BMO', 'phc');
 
   const {mobileNumber, user} = route.params;
-  const {signIn, signUp, zimLogIn} = useAuth();
+  const {signIn, signUp} = useAuth();
 
   const [disabled, setDisabled] = useState(true);
 
@@ -179,10 +179,6 @@ export const FillSignUpDetails = ({navigation, route}) => {
       console.log(res.data);
 
       await signIn(res.data);
-      await zimLogIn({
-        userID: String(res.data.id),
-        userName: String(res.data.id),
-      });
     } catch (error) {
       console.error('error while registering', error);
       // Alert.alert('User already registered with mobile number');

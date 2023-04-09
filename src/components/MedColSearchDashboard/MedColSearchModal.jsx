@@ -14,8 +14,9 @@ export const MedColSearchModal = ({visible, setVisible}) => {
             </Pressable>
             <Text>Medical College</Text>
             <SelectDropdown
-            data={['PHC', 'CHC']}
-            defaultButtonText="Choose Medical College"
+            data={[]}
+            defaultButtonText="No medical college available"
+            disabled={true}
             buttonTextStyle={{
               textAlign: 'left',
               color: styleConstants.BLUE,

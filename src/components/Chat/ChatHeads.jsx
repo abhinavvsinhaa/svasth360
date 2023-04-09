@@ -13,7 +13,7 @@ import axiosInstance from '../../api/axios';
 import {styleConstants} from '../../constants/constant';
 import {useAuth} from '../../context/Auth';
 
-export default ChatHead = ({ navigation }) => {
+export default ChatHead = ({navigation}) => {
   const [convos, setConvos] = useState([]);
   const {authData} = useAuth();
 
@@ -37,39 +37,39 @@ export default ChatHead = ({ navigation }) => {
       const response = await axiosInstance.post('conversation', {
         userId: authData.id,
       });
-  
+
       // console.log(response.data);
-  
+
       const convs = response.data.map(convo => {
         // const users = Array(convo.users)
         // const messages = Array(convo.messages)
         // if (users.length > 0) {
-          let user = convo.users[0].id == authData.id ? convo.users[1] : convo.users[0]
-          // console.log(user.id)
-          const msgContent = 
-            convo.messages[convo.messages.length - 1].type == 0
-              ? convo.messages[convo.messages.length - 1].content
-              : 'Attachment';
-          const timestamp = convo.messages[convo.messages.length - 1].timestamp;
-          const dt = new Date(timestamp);
-    
-          return {
-            id: user.id, 
-            name: user.name,
-            mobileNumber: user.mobileNumber,
-            lastMessage: msgContent,
-            availability: user.availability,
-            // timestamp: `${dt.toTimeString()}`,
-          };
+        let user =
+          convo.users[0].id == authData.id ? convo.users[1] : convo.users[0];
+        // console.log(user.id)
+        const msgContent =
+          convo.messages[convo.messages.length - 1].type == 0
+            ? convo.messages[convo.messages.length - 1].content
+            : 'Attachment';
+        const timestamp = convo.messages[convo.messages.length - 1].timestamp;
+        const dt = new Date(timestamp);
+
+        return {
+          id: user.id,
+          name: user.name,
+          mobileNumber: user.mobileNumber,
+          lastMessage: msgContent,
+          availability: user.availability,
+          fcmToken: user.fcmToken
+          // timestamp: `${dt.toTimeString()}`,
+        };
         // }
-      })
+      });
 
       setConvos(convs);
-
     } catch (error) {
-      console.error('Error here', error) 
+      console.error('Error here', error);
     }
-
   };
 
   useEffect(() => {
@@ -92,20 +92,28 @@ export default ChatHead = ({ navigation }) => {
                       style={{height: 50, width: 50}}
                     />
                     <View style={{marginLeft: 10}}>
-                      <Pressable onPress={() => {
-                        navigation.navigate('Personal Chat', {
+                      <Pressable
+                        onPress={() => {
+                          navigation.navigate('Personal Chat', {
                             userId: convo.id,
                             name: convo.name,
-                            mobileNumber: convo.mobileNumber
-                        })
-                      }}>
+                            mobileNumber: convo.mobileNumber,
+                            fcmToken: convo.fcmToken
+                          });
+                        }}>
                         <Text>{convo.name}</Text>
                         <Text>{convo.lastMessage}</Text>
                       </Pressable>
                     </View>
                   </View>
                   <View>
-                    <Text>{convo.availability}</Text>
+                    {
+                      convo.availability == 'offline' 
+                      ?
+                      <Image source={require('../../assets/images/red-icon.png')} style={{ height: 25, width: 25 }}/>
+                      :
+                      <Image source={require('../../assets/images/green-icon.png')} style={{ height: 25, width: 25 }}/>
+                    }
                     <Text>{convo.timestamp}</Text>
                   </View>
                 </View>
@@ -120,7 +128,7 @@ export default ChatHead = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 10,
-    paddingHorizontal: 10,
+    marginHorizontal: 10,
     backgroundColor: styleConstants.SAND,
     flex: 1,
   },
